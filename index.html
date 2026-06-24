@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gold Slider</title>
+
+<style>
+  body {
+    background: #111;
+    font-family: Arial, sans-serif;
+    padding: 40px;
+    color: white;
+  }
+
+  .slider-container {
+    width: 300px;
+    margin: 20px 0;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: #b8860b; /* dark gold */
+    border-radius: 5px;
+    outline: none;
+  }
+
+  /* Slider thumb */
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: gold;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff3;
+    transition: 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    background: #ffd700;
+    transform: scale(1.1);
+  }
+
+  /* Firefox */
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: gold;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff3;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>Gold Slider</h2>
+
+<div class="slider-container">
+  <input type="range" min="0" max="100" value="50">
+</div>
+
+</body>
+</html>
