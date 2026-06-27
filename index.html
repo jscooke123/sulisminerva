@@ -144,24 +144,51 @@
     text-shadow: 0 2px 18px rgba(255,255,255,0.25);
   }
 
-  .divider{
+  /* ===== SHARED DIVIDER (line ◆ line) ===== */
+  /* Used in hero, merged-right, merged-left, tagline */
+  .divider,
+  .mini-divider{
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 18px;
+    gap: 14px;
+  }
+
+  .divider{
     margin: 22px 0 14px;
   }
 
+  .mini-divider{
+    margin: 9px 0 11px;
+    width: 100%;
+  }
+
+  /* Long lines for hero divider */
   .divider .line{
     width: 150px;
     height: 1px;
     background: var(--ink);
     opacity: .55;
+    display: block;
+    flex-shrink: 0;
   }
 
-  .divider .diamond{
+  /* Shorter lines for mini-dividers */
+  .mini-divider .line{
+    width: 50px;
+    height: 1px;
+    background: var(--ink);
+    opacity: .55;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .divider .diamond,
+  .mini-divider .diamond{
     color: var(--gold-deep);
-    font-size: 14px;
+    font-size: 11px;
+    line-height: 1;
+    flex-shrink: 0;
   }
 
   .water{
@@ -202,6 +229,7 @@
     padding: 17px 38px;
     border-radius: 3px;
     display: inline-block;
+    position: relative;
   }
 
   .btn-filled{
@@ -225,7 +253,7 @@
   }
 
   /* ===== "Coming soon" tooltip ===== */
-  .btn, .buy-now{ position: relative; }
+  .buy-now{ position: relative; }
 
   .coming-soon-tip{
     position: absolute;
@@ -253,15 +281,7 @@
     100% { opacity: 0; }
   }
 
-  /* ===== MERGED SECTION =====
-    Reference image: 1024 × 704 px
-    Layout:
-      Top half   : waterfall photo full width
-      Top-right  : "THE SOURCE" text overlay (no background push — pure overlay)
-      Middle band: icon row (Ankh ~17% left, Udja ~38% left) + can right
-      Bottom-left: "EXPERIENCE SULIS MINERVA" large text + button
-      Bottom band: tagline baked into image — no separate HTML band needed
-  */
+  /* ===== MERGED SECTION ===== */
   .section-merged{
     position: relative;
     width: 100%;
@@ -274,7 +294,7 @@
     display: block;
   }
 
-  /* ── RIGHT overlay: "THE SOURCE" — floats over top-right of the waterfall ── */
+  /* RIGHT overlay — "THE SOURCE" floats over top-right of the waterfall */
   .merged-right{
     position: absolute;
     top: 0;
@@ -288,13 +308,12 @@
     text-align: center;
     padding: 2% 3%;
     line-height: 1.5;
-    /* No background — text sits directly on the gold gradient in the photo */
   }
 
   .merged-right h2{
     font-family: 'Playfair Display', serif;
     font-weight: 500;
-    font-size: clamp(30px, 0vw, 32px);
+    font-size: clamp(14px, 2.2vw, 32px);
     letter-spacing: 5px;
     color: var(--ink);
     text-transform: uppercase;
@@ -302,45 +321,38 @@
 
   .merged-right p{
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(25px, 20vw, 16px);
+    font-size: clamp(10px, 1.1vw, 16px);
     line-height: 1.9;
     color: var(--ink-soft);
   }
 
-  .mini-divider{
-    margin: 8px 0 12px;
-    line-height: 1;
-  }
-  
-  .mini-divider .line{
-    width: 150px;
-    height: 1px;
-    background: var(--ink);
-    opacity: .55;
-  }
-
-  .mini-divider .diamond{
-    color: var(--gold-deep);
-    font-size: 14px;
-  }
-
-  /* ── ICON LABELS ──
-     Image measurements (1024 × 704):
-       Ankh icon centre  : left ≈ 17%,  top ≈ 47%  → label top ≈ 57%
-       Udja icon centre  : left ≈ 38%,  top ≈ 47%  → label top ≈ 57%
-  */
+  /* ICON LABELS — each label + its own mini-divider below it */
   .icon-labels{
     position: absolute;
-    top: 12%;
+    top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
   }
 
-  .icon-label{
+  /* Wrapper for each icon's label + its underline divider */
+  .icon-label-group{
     position: absolute;
     transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    top: 57%;       /* just below the icon bases */
+  }
+
+  .icon-label-group--ankh  { left: 13%; }
+  .icon-label-group--udja  { left: 29%; }
+  .icon-label-group--seneb { left: 43.5%; }
+  .icon-label-group--water { left: 56.5%; }
+
+  .icon-label{
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(7px, 0.9vw, 13px);
     font-weight: 600;
@@ -349,18 +361,15 @@
     color: var(--ink);
     text-align: center;
     white-space: nowrap;
-    top: 57%;
+    line-height: 1.2;
   }
 
-  .icon-label--ankh  { left: 13%; }
-  .icon-label--udja  { left: 29%; }
-  /* Seneb and Water are on the can only in this image — hidden at desktop */
-  .icon-label--seneb { left: 43.5%; }
-  .icon-label--water { left: 56.5%; }
+  /* The divider sitting directly below each label */
+  .icon-label-group .mini-divider{
+    margin: 2px 0 0;
+  }
 
-  /* ── LEFT overlay: EXPERIENCE block ──
-     Sits in the lower-left quadrant, below the icon row.
-     Reference: text starts ~53% from top, left ~4% */
+  /* LEFT overlay — EXPERIENCE block */
   .merged-left{
     position: absolute;
     left: 4%;
@@ -383,20 +392,18 @@
   .exp-heading{
     font-family: 'Playfair Display', serif;
     font-weight: 600;
-    /* Large, prominent — matches the bold display in the reference */
     font-size: clamp(22px, 4vw, 58px);
     line-height: 1.05;
     letter-spacing: 1px;
     color: var(--ink);
     text-transform: uppercase;
-    margin-bottom: 6px;
+    margin-bottom: 0;
   }
 
   .merged-left .btn{
-    margin-top: -50px;
+    margin-top: 10px;
     font-size: clamp(9px, 0.95vw, 13px);
     padding: clamp(9px, 1.3vw, 16px) clamp(14px, 2.2vw, 32px);
-    /* Outlined style to match the reference button */
     background: transparent;
     color: var(--ink);
     border: 1px solid var(--ink);
@@ -406,7 +413,7 @@
   .tagline-band{
     position: relative;
     text-align: center;
-    padding: 46px 24px 52px;
+    padding: 38px 24px 44px;
     background: linear-gradient(180deg, var(--gold-light), var(--gold) 75%);
     line-height: 1.4;
   }
@@ -414,21 +421,45 @@
   .moon-icon{
     font-size: 22px;
     color: var(--ink);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
+  /* Tagline row: long line — ◆ — text — ◆ — long line */
   .tagline-text{
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    font-size: clamp(16px, 1.8vw, 24px);
+    font-size: clamp(14px, 1.6vw, 22px);
     letter-spacing: 1.5px;
     color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
   }
+
+  .tagline-text .line{
+    width: 80px;
+    height: 1px;
+    background: var(--ink);
+    opacity: .55;
+    display: block;
+    flex-shrink: 0;
+  }
+
   .tagline-text .diamond{
     color: var(--gold-deep);
-    font-size: 12px;
-    margin: 0 16px;
-    vertical-align: middle;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  /* Divider beneath the tagline text */
+  .tagline-below{
+    margin-top: 16px;
+  }
+
+  .tagline-below .line{
+    width: 120px;
   }
 
   /* ===== RESPONSIVE ===== */
@@ -437,15 +468,18 @@
     .navbar{ padding: 24px 28px 0; }
     .divider .line{ width: 70px; }
     .merged-right{ width: 42%; top: 3%; }
-    .merged-left{ width: 46%; top: 54%; }
+    .merged-left{ width: 46%; top: 74%; }
     .exp-heading{ font-size: clamp(18px, 3.5vw, 48px); }
+    .tagline-text .line{ width: 50px; }
   }
 
   @media (max-width: 560px){
     .merged-right{ width: 54%; top: 2%; right: 1%; }
-    .merged-left{ left: 3%; width: 56%; top: 56%; }
+    .merged-left{ left: 3%; width: 56%; top: 76%; }
     .exp-heading{ font-size: clamp(16px, 5vw, 36px); }
     .icon-label{ font-size: clamp(6px, 1.8vw, 10px); letter-spacing: 1px; }
+    .tagline-text .line{ width: 30px; }
+    .tagline-text{ gap: 10px; }
   }
 </style>
 </head>
@@ -506,18 +540,11 @@
 
         <picture>
           <source class="merged-photo-img" srcset="sulis-merged-bg.jpg" type="image/webp">
-          <img class="merged-photo-img" src="sulis-merged-bg.jpg" alt="Sulis Minerva — the Mendip source waterfall and the can with Egyptian symbols" loading="eager">
+          <img class="merged-photo-img" src="sulis-merged-bg.jpg"
+               alt="Sulis Minerva — the Mendip source waterfall and the can with Egyptian symbols" loading="eager">
         </picture>
 
-        <!-- LEFT: Experience heading + button (lower-left, below the icons) -->
-        <div class="merged-left">
-          <p class="eyebrow">Pure. Powerful. Precious.</p>
-          <h2 class="exp-heading">Experience<br>Sulis Minerva</h2>
-          <div class="mini-divider"><span>&#9670;</span></div>
-          <a href="https://YOUR-DOMAIN.com/the-source" class="btn btn-filled" data-coming-soon>Experience Sulis Minerva</a>
-        </div>
-
-        <!-- RIGHT: The Source text (top-right gold gradient area) -->
+        <!-- RIGHT: The Source text (top-right, overlaid on waterfall) -->
         <div class="merged-right">
           <h2>The Source</h2>
           <div class="mini-divider">
@@ -532,12 +559,57 @@
           </p>
         </div>
 
-        <!-- ICON LABELS: pinned beneath each of the four icons -->
+        <!-- LEFT: Experience heading + button (lower-left, below icons) -->
+        <div class="merged-left">
+          <p class="eyebrow">Pure. Powerful. Precious.</p>
+          <h2 class="exp-heading">Experience<br>Sulis Minerva</h2>
+          <div class="mini-divider">
+            <span class="line"></span>
+            <span class="diamond">&#9670;</span>
+            <span class="line"></span>
+          </div>
+          <a href="https://YOUR-DOMAIN.com/the-source" class="btn" data-coming-soon>Experience Sulis Minerva</a>
+        </div>
+
+        <!-- ICON LABELS: each label with its own divider below it -->
         <div class="icon-labels">
-          <span class="icon-label icon-label--ankh">Everlasting Life</span>
-          <span class="icon-label icon-label--udja">Prosperity</span>
-          <span class="icon-label icon-label--seneb">Health</span>
-          <span class="icon-label icon-label--water">Water</span>
+
+          <div class="icon-label-group icon-label-group--ankh">
+            <span class="icon-label">Everlasting Life</span>
+            <div class="mini-divider">
+              <span class="line"></span>
+              <span class="diamond">&#9670;</span>
+              <span class="line"></span>
+            </div>
+          </div>
+
+          <div class="icon-label-group icon-label-group--udja">
+            <span class="icon-label">Prosperity</span>
+            <div class="mini-divider">
+              <span class="line"></span>
+              <span class="diamond">&#9670;</span>
+              <span class="line"></span>
+            </div>
+          </div>
+
+          <div class="icon-label-group icon-label-group--seneb">
+            <span class="icon-label">Health</span>
+            <div class="mini-divider">
+              <span class="line"></span>
+              <span class="diamond">&#9670;</span>
+              <span class="line"></span>
+            </div>
+          </div>
+
+          <div class="icon-label-group icon-label-group--water">
+            <span class="icon-label">Water</span>
+            <div class="mini-divider">
+              <span class="line"></span>
+              <span class="diamond">&#9670;</span>
+              <span class="line"></span>
+            </div>
+          </div>
+
         </div>
 
       </section>
@@ -545,9 +617,22 @@
       <!-- ============ TAGLINE BAND ============ -->
       <section class="tagline-band">
         <div class="moon-icon">&#9789;</div>
+
+        <!-- Tagline with lines and diamonds flanking the text -->
         <p class="tagline-text">
-          <span class="diamond">&#9670;</span>For where I am the abundance is with me.<span class="diamond">&#9670;</span>
+          <span class="line"></span>
+          <span class="diamond">&#9670;</span>
+          For where I am the abundance is with me.
+          <span class="diamond">&#9670;</span>
+          <span class="line"></span>
         </p>
+
+        <!-- Divider below the tagline -->
+        <div class="mini-divider tagline-below">
+          <span class="line"></span>
+          <span class="diamond">&#9670;</span>
+          <span class="line"></span>
+        </div>
       </section>
 
     </div>
