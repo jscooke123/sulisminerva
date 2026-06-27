@@ -11,9 +11,9 @@
 
 <style>
   :root{
-    --ink:        #3a2613;   /* dark brown text */
+    --ink:        #3a2613;
     --ink-soft:   #4a311c;
-    --gold:       #c9a455;   /* gold accent / diamond */
+    --gold:       #c9a455;
     --gold-deep:  #a9842f;
     --gold-light: #e6cf9a;
     --cream:      #f4ead2;
@@ -37,11 +37,11 @@
     position: relative;
     width: 100vw;
     min-height: 100vh;
-    min-height: 100dvh; /* accounts for mobile browser address bars */
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: var(--gold-deep); /* shows only for an instant while the photo loads */
+    background: var(--gold-deep);
   }
 
   .hero-bg{
@@ -54,8 +54,6 @@
   .hero-bg img{
     width: 100%;
     height: 100%;
-    /* cover = the photo is maximised edge-to-edge, filling the full width
-       of the screen (this is the "no pillarboxing" version you asked for) */
     object-fit: cover;
     object-position: center;
     display: block;
@@ -255,106 +253,55 @@
     100% { opacity: 0; }
   }
 
-  /* ===== THE SOURCE ===== */
-  /* Photo runs full width at its native aspect ratio (no cropping at all —
-     width:100%/height:auto means the whole photo is always shown intact).
-     The text panel sits on TOP of it as an absolutely-positioned overlay,
-     so nothing about the photo itself is cut, scaled oddly, or hidden. */
-  .section-source{
-    position: relative;
-    width: 100%;
-    line-height: 0; /* removes the tiny gap browsers add under inline images */
-  }
-
-  .source-photo-img{
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .source-text{
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 42%;
-    min-width: 280px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 4% 4%;
-    background: linear-gradient(
-      90deg,
-      rgba(230,207,154,0) 0%,
-      rgba(230,207,154,0.55) 28%,
-      rgba(201,164,85,0.92) 58%,
-      var(--gold) 100%
-    );
-  }
-
-  .source-text h2{
-    font-family: 'Playfair Display', serif;
-    font-weight: 500;
-    font-size: clamp(18px, 2.6vw, 38px);
-    letter-spacing: 5px;
-    color: var(--ink);
-    text-transform: uppercase;
-  }
-
-  .mini-divider{
-    margin: 12px 0 16px;
-    color: var(--gold-deep);
-    font-size: clamp(10px, 1vw, 13px);
-  }
-
-  .source-text p{
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(11px, 1.3vw, 17px);
-    line-height: 1.8;
-    color: var(--ink-soft);
-  }
-
-  /* ===== EXPERIENCE ===== */
-  /* Your photo already has the icon row and the can rendered into it, so
-     there's no separate icon/can markup here anymore — just the full,
-     uncropped photo with the heading and button floated over the open
-     water on the lower-left, where the photo has clear space. */
-  .section-experience{
+  /* ===== MERGED SECTION ===== */
+  /*
+    Source image: 1024 × 660 px  (aspect ≈ 64.45% tall relative to width)
+    Icon horizontal centres (% of image width):
+      Ankh        ≈ 10.5%
+      Udja        ≈ 22.0%
+      Seneb       ≈ 33.5%
+      Water drop  ≈ 45.0%
+    Icons sit in the bottom panel (below the ~50% horizontal divider).
+    Their vertical centre ≈ 68% from top of the full image.
+    Labels placed at 80% from top — just below the bottom of the icons.
+  */
+  .section-merged{
     position: relative;
     width: 100%;
     line-height: 0;
   }
 
-  .experience-photo-img{
+  .merged-photo-img{
     width: 100%;
     height: auto;
     display: block;
   }
 
-  .experience-text{
+  /* LEFT overlay — experience heading + button
+     Sits in the lower-left golden water area, below the icons */
+  .merged-left{
     position: absolute;
-    left: 6%;
-    bottom: 7%;
-    width: 40%;
-    min-width: 220px;
+    left: 3%;
+    bottom: 5%;
+    width: 30%;
+    min-width: 160px;
+    line-height: 1.4;
   }
 
   .eyebrow{
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(9px, 1vw, 14px);
+    font-size: clamp(8px, 0.9vw, 13px);
     font-weight: 600;
     letter-spacing: 2.5px;
     text-transform: uppercase;
     color: var(--ink-soft);
-    margin-bottom: 6px;
+    margin-bottom: 5px;
   }
 
   .exp-heading{
     font-family: 'Playfair Display', serif;
     font-weight: 500;
-    font-size: clamp(16px, 3vw, 40px);
+    font-size: clamp(14px, 2.4vw, 34px);
     line-height: 1.15;
     letter-spacing: 1.5px;
     color: var(--ink);
@@ -362,11 +309,91 @@
     margin-bottom: 4px;
   }
 
-  .experience-text .btn{
-    margin-top: 4px;
-    font-size: clamp(9px, 0.9vw, 14px);
-    padding: clamp(8px, 1.2vw, 17px) clamp(14px, 2.4vw, 38px);
+  .merged-left .btn{
+    margin-top: 6px;
+    font-size: clamp(8px, 0.85vw, 12px);
+    padding: clamp(7px, 1.1vw, 14px) clamp(10px, 1.8vw, 26px);
   }
+
+  /* RIGHT overlay — the source text
+     Covers the top-right quadrant where the image has gold gradient space */
+  .merged-right{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 36%;
+    min-width: 200px;
+    /* Only cover the top panel of the image (waterfall area, ~50% height) */
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3% 4%;
+    line-height: 1.4;
+    background: linear-gradient(
+      90deg,
+      rgba(230,207,154,0)    0%,
+      rgba(230,207,154,0.45) 22%,
+      rgba(201,164,85,0.88)  52%,
+      var(--gold)            100%
+    );
+  }
+
+  .merged-right h2{
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    font-size: clamp(15px, 2.2vw, 32px);
+    letter-spacing: 5px;
+    color: var(--ink);
+    text-transform: uppercase;
+  }
+
+  .merged-right p{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(10px, 1.1vw, 15px);
+    line-height: 1.8;
+    color: var(--ink-soft);
+  }
+
+  .mini-divider{
+    margin: 10px 0 13px;
+    color: var(--gold-deep);
+    font-size: clamp(10px, 1vw, 13px);
+    line-height: 1;
+  }
+
+  /* ── ICON LABELS ──
+     Four spans, each absolutely positioned under its icon.
+     top: 80% aligns them just below the bottom of the icons.
+     left values match each icon's horizontal centre. */
+  .icon-labels{
+    position: absolute;
+    top: 80%;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .icon-label{
+    position: absolute;
+    transform: translateX(-50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(6px, 0.8vw, 11px);
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .icon-label--ankh  { left: 10.5%; }
+  .icon-label--udja  { left: 22.0%; }
+  .icon-label--seneb { left: 33.5%; }
+  .icon-label--water { left: 45.0%; }
 
   /* ===== TAGLINE BAND ===== */
   .tagline-band{
@@ -374,6 +401,7 @@
     text-align: center;
     padding: 46px 24px 52px;
     background: linear-gradient(180deg, var(--gold-light), var(--gold) 75%);
+    line-height: 1.4;
   }
 
   .moon-icon{
@@ -400,16 +428,18 @@
   @media (max-width: 900px){
     .nav-links{ display: none; }
     .navbar{ padding: 24px 28px 0; }
-    .hero-content{ padding-top: 0vh; }
     .divider .line{ width: 70px; }
-
-    .source-text{ width: 52%; padding: 3% 3%; }
-    .experience-text{ width: 48%; }
+    .merged-right{ width: 46%; }
+    .merged-left{ width: 38%; }
   }
 
   @media (max-width: 560px){
-    .source-text{ width: 60%; }
-    .experience-text{ left: 4%; width: 52%; }
+    .merged-right{ width: 55%; height: 48%; }
+    .merged-left{ left: 3%; width: 52%; }
+    .icon-label{
+      font-size: clamp(5px, 1.8vw, 9px);
+      letter-spacing: 0.6px;
+    }
   }
 </style>
 </head>
@@ -465,13 +495,24 @@
 
       </section>
 
-      <!-- ============ THE SOURCE ============ -->
-      <section class="section-source">
+      <!-- ============ MERGED: SOURCE + EXPERIENCE ============ -->
+      <section class="section-merged">
+
         <picture>
-          <source srcset="sulis-source-bg.jpg" type="image/webp">
-          <img class="source-photo-img" src="sulis-source-bg.jpg" alt="Sunlit waterfall at the Mendip spring">
+          <source class="merged-photo-img" srcset="sulis-merged-bg.jpg" type="image/webp">
+          <img src="sulis-merged-bg.jpg" alt="Sulis Minerva — the Mendip source waterfall and the can with Egyptian symbols" loading="eager">
         </picture>
-        <div class="source-text">
+
+        <!-- LEFT: Experience heading + button (lower-left, below the icons) -->
+        <div class="merged-left">
+          <p class="eyebrow">Pure. Powerful. Precious.</p>
+          <h2 class="exp-heading">Experience<br>Sulis Minerva</h2>
+          <div class="mini-divider"><span>&#9670;</span></div>
+          <a href="https://YOUR-DOMAIN.com/the-source" class="btn btn-filled" data-coming-soon>Experience Sulis Minerva</a>
+        </div>
+
+        <!-- RIGHT: The Source text (top-right gold gradient area) -->
+        <div class="merged-right">
           <h2>The Source</h2>
           <div class="mini-divider"><span>&#9670;</span></div>
           <p>
@@ -480,24 +521,15 @@
             Presented for today.
           </p>
         </div>
-      </section>
 
-      <!-- ============ EXPERIENCE ============ -->
-      <!-- This photo already has the icon row (Ankh / Udja / Seneb / water
-           drop) and the can rendered into it, so only the heading + button
-           are added here as an overlay — nothing else needed from markup. -->
-      <section class="section-experience">
-        <picture>
-          <source srcset="sulis-experience-bg.jpg" type="image/webp">
-          <img class="experience-photo-img" src="sulis-experience-bg.jpg" alt="Sulis Minerva can resting in golden water among rocks, with Ankh, Udja, Seneb and water-drop icons">
-        </picture>
-
-        <div class="experience-text">
-          <p class="eyebrow">Pure. Powerful. Precious.</p>
-          <h2 class="exp-heading">Experience<br>Sulis Minerva</h2>
-          <div class="mini-divider"><span>&#9670;</span></div>
-          <a href="https://YOUR-DOMAIN.com/the-source" class="btn btn-filled" data-coming-soon>Experience Sulis Minerva</a>
+        <!-- ICON LABELS: pinned beneath each of the four icons -->
+        <div class="icon-labels">
+          <span class="icon-label icon-label--ankh">Everlasting Life</span>
+          <span class="icon-label icon-label--udja">Prosperity</span>
+          <span class="icon-label icon-label--seneb">Health</span>
+          <span class="icon-label icon-label--water">Water</span>
         </div>
+
       </section>
 
       <!-- ============ TAGLINE BAND ============ -->
@@ -512,11 +544,6 @@
   </div>
 
   <script>
-    // The buttons already point to their real destination URLs (see the
-    // href values above — just swap "YOUR-DOMAIN.com" for your actual
-    // domains). They're temporarily disabled below so nothing goes live
-    // until you're ready. When the destination pages exist, change this
-    // single value to `true` and every button will work immediately.
     const LINKS_ENABLED = false;
 
     document.querySelectorAll('[data-coming-soon]').forEach(function (link) {
