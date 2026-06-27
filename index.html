@@ -30,7 +30,7 @@
     --line-source:           80px;
 
     /* "Experience Sulis Minerva" block (bottom-left) */
-    --line-experience:       120px;
+    --line-experience:       220px;
 
     /* Icon label dividers — set each independently */
     --line-label-ankh:       80px;   /* Everlasting Life — longest word, least gap to neighbour */
@@ -45,7 +45,7 @@
     --line-tagline-below:   120px;
 
     /* How far left to shift the Experience divider relative to the heading block */
-    --experience-divider-shift: -50px;
+    --experience-divider-shift: -90px;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
@@ -501,7 +501,31 @@
   .tagline-below{
     margin-top: 16px;
   }
-
+  /* ===== MERGED OVERLAY IMAGE ===== */
+  .merged-overlay-img {
+    position: absolute;
+  
+    /* ── Position controls — adjust these to taste ── */
+    top: 40%;        /* vertical position */
+    left: 30%;       /* horizontal position */
+  
+    /* ── Size ── */
+    width: 35%;      /* scale relative to section width */
+  
+    /* ── Transparency ── */
+    opacity: 0.35;   /* 0 = invisible, 1 = fully opaque */
+  
+    /* Sits above background photo but below all text layers */
+    z-index: 1;
+  
+    pointer-events: none; /* doesn't block clicks */
+  }
+  
+  .merged-overlay-img img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
   /* ===== RESPONSIVE ===== */
   @media (max-width: 900px){
     .nav-links{ display: none; }
@@ -574,7 +598,10 @@
 
       <!-- ============ MERGED: SOURCE + EXPERIENCE ============ -->
       <section class="section-merged">
-
+        <!-- Add this inside .section-merged, BEFORE the merged-right div -->
+        <div class="merged-overlay-img">
+          <img src="your-overlay-image.png" alt="">
+        </div>
         <picture>
           <source class="merged-photo-img" srcset="sulis-merged-bg.jpg" type="image/webp">
           <img class="merged-photo-img" src="sulis-merged-bg.jpg"
