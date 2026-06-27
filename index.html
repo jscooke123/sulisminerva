@@ -43,6 +43,9 @@
 
     /* Tagline below divider */
     --line-tagline-below:   120px;
+
+    /* How far left to shift the Experience divider relative to the heading block */
+    --experience-divider-shift: 0px;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
@@ -212,6 +215,10 @@
   }
 
   /* ── Experience block divider lines ── */
+  .merged-left .mini-divider{
+    margin-left: var(--experience-divider-shift);
+  }
+
   .merged-left .mini-divider .line{
     width: var(--line-experience);
   }
@@ -440,7 +447,7 @@
   }
 
   .merged-left .btn{
-    margin-top: 10px;
+    margin-top: 0px;
     font-size: clamp(9px, 0.95vw, 13px);
     padding: clamp(9px, 1.3vw, 16px) clamp(14px, 2.2vw, 32px);
     background: transparent;
