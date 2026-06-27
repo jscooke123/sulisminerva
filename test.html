@@ -212,7 +212,7 @@
   .hero-content h1{
     font-family: 'Playfair Display', serif;
     font-weight: 500;
-    font-size: clamp(40px, 6vw, 92px);
+    font-size: clamp(40px, 0vw, 92px);
     letter-spacing: 10px;
     color: var(--ink);
     text-shadow: 0 2px 18px rgba(255,255,255,0.25);
@@ -627,7 +627,7 @@
     /* ── Mobile CTA ── */
     .m-cta-row {
       margin-top: auto;
-      margin-bottom: 40px;
+      margin-bottom: -30px;
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -694,63 +694,79 @@
       margin-top: 10px;
     }
 
-    /* ── MOBILE PHOTO STRIP ── */
+    /* ── MOBILE PHOTO STRIP (now contains overlays) ── */
     .m-photo-strip {
       width: 100%;
-      position: relative;
+      position: relative;      /* anchor for all absolute children */
       line-height: 0;
       overflow: hidden;
     }
-    .m-photo-strip img {
+    .m-photo-strip > img {     /* background waterfall */
       width: 100%;
       height: auto;
       display: block;
       object-fit: cover;
     }
 
-    /* ── MOBILE ICON LABELS (horizontal scroll row) ── */
-    .m-icons-row {
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-start;
-      padding: 28px 16px 20px;
-      background: var(--cream);
-      gap: 6px;
+    /* Can overlay — tweak top/left/width to reposition */
+    .m-can-overlay {
+      position: absolute;
+      top: 0%;            /* ← move up/down */
+      left: 50%;          /* ← move left/right */
+      width: 50%;         /* ← resize the can */
+      z-index: 2;
+      pointer-events: none;
+    }
+    .m-can-overlay img {
+      width: 100%;
+      display: block;
+      clip-path: inset(3% 3% 3% 3%);
+      filter: brightness(1) hue-rotate(8deg);
+      mix-blend-mode: multiply;
     }
 
-    .m-icon-item {
+    /* Container that sits over the whole photo */
+    .m-photo-icons {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* Individual label — position each via inline style="top:%; left:%" */
+    .m-photo-icon-label {
+      position: absolute;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
-      flex: 1;
-      text-align: center;
+      gap: 3px;
     }
 
     .m-icon-label {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 600;
       letter-spacing: 1.5px;
       text-transform: uppercase;
       color: var(--ink);
       white-space: nowrap;
+      text-align: center;
     }
 
     .m-icon-divider {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
     .m-icon-divider .line {
-      width: 22px;
+      width: 18px;
       height: 1px;
       background: var(--ink);
       opacity: .5;
     }
     .m-icon-divider .diamond {
       color: var(--gold-deep);
-      font-size: 10px;
+      font-size: 9px;
       line-height: 1;
     }
 
@@ -1035,45 +1051,56 @@
           </p>
         </section>
 
-        <!-- ── Mobile: Photo ── -->
+        <!-- ── Mobile: Photo + Can overlay + Icon labels ── -->
         <div class="m-photo-strip">
+          <!-- Background waterfall image -->
           <img src="sulis-merged-bg.jpg" alt="Sulis Minerva waterfall source" loading="lazy">
-        </div>
 
-        <!-- ── Mobile: Icon Row ── -->
-        <div class="m-icons-row">
-          <div class="m-icon-item">
-            <span class="m-icon-label">Everlasting Life</span>
-            <div class="m-icon-divider">
-              <span class="line"></span>
-              <span class="diamond">&#9670;</span>
-              <span class="line"></span>
-            </div>
+          <!-- Can overlay image — position/size via .m-can-overlay in CSS -->
+          <div class="m-can-overlay">
+            <img src="merged-overlay-img.png" alt="Sulis Minerva Can">
           </div>
-          <div class="m-icon-item">
-            <span class="m-icon-label">Prosperity</span>
-            <div class="m-icon-divider">
-              <span class="line"></span>
-              <span class="diamond">&#9670;</span>
-              <span class="line"></span>
+
+          <!-- Icon labels — each absolutely positioned so you can freely move them -->
+          <div class="m-photo-icons">
+
+            <div class="m-photo-icon-label" style="top: 62%; left: 5%;">
+              <span class="m-icon-label">Everlasting Life</span>
+              <div class="m-icon-divider">
+                <span class="line"></span>
+                <span class="diamond">&#9670;</span>
+                <span class="line"></span>
+              </div>
             </div>
-          </div>
-          <div class="m-icon-item">
-            <span class="m-icon-label">Health</span>
-            <div class="m-icon-divider">
-              <span class="line"></span>
-              <span class="diamond">&#9670;</span>
-              <span class="line"></span>
+
+            <div class="m-photo-icon-label" style="top: 62%; left: 28%;">
+              <span class="m-icon-label">Prosperity</span>
+              <div class="m-icon-divider">
+                <span class="line"></span>
+                <span class="diamond">&#9670;</span>
+                <span class="line"></span>
+              </div>
             </div>
-          </div>
-          <div class="m-icon-item">
-            <span class="m-icon-label">Water</span>
-            <div class="m-icon-divider">
-              <span class="line"></span>
-              <span class="diamond">&#9670;</span>
-              <span class="line"></span>
+
+            <div class="m-photo-icon-label" style="top: 62%; left: 51%;">
+              <span class="m-icon-label">Health</span>
+              <div class="m-icon-divider">
+                <span class="line"></span>
+                <span class="diamond">&#9670;</span>
+                <span class="line"></span>
+              </div>
             </div>
-          </div>
+
+            <div class="m-photo-icon-label" style="top: 62%; left: 72%;">
+              <span class="m-icon-label">Water</span>
+              <div class="m-icon-divider">
+                <span class="line"></span>
+                <span class="diamond">&#9670;</span>
+                <span class="line"></span>
+              </div>
+            </div>
+
+          </div><!-- /m-photo-icons -->
         </div>
 
         <!-- ── Mobile: Experience ── -->
