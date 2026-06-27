@@ -502,30 +502,28 @@
     margin-top: 16px;
   }
   /* ===== MERGED OVERLAY IMAGE ===== */
-  .merged-overlay-img {
+    .merged-overlay-img {
     position: absolute;
-  
-    /* ── Position controls — adjust these to taste ── */
-    top: 40%;        /* vertical position */
-    left: 30%;       /* horizontal position */
-  
-    /* ── Size ── */
-    width: 35%;      /* scale relative to section width */
-  
-    /* ── Transparency ── */
-    opacity: 1;   /* 0 = invisible, 1 = fully opaque */
-  
-    /* Sits above background photo but below all text layers */
+    top: 0%;
+    left: 54%;
+    width: 46%;
     z-index: 1;
-  
-    pointer-events: none; /* doesn't block clicks */
+    pointer-events: none;
   }
   
+  /* Tint + trim */
   .merged-overlay-img img {
     width: 100%;
-    height: auto;
     display: block;
+  
+    /* --- Trim edges inward (change 3% to whatever amount you want) --- */
+    clip-path: inset(3% 3% 3% 3%);
+  
+    /* --- Tint only the visible pixels --- */
+    filter: brightness(0) saturate(100%) sepia(100%) hue-rotate(200deg) saturate(300%);
+    mix-blend-mode: multiply;
   }
+
   /* ===== RESPONSIVE ===== */
   @media (max-width: 900px){
     .nav-links{ display: none; }
