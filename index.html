@@ -2,67 +2,298 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Gold Slider</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sulis Minerva | Elixir of Life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-  body {
-    background: #111;
-    font-family: Arial, sans-serif;
-    padding: 40px;
-    color: white;
+  :root{
+    --ink:        #3a2613;   /* dark brown text */
+    --ink-soft:   #4a311c;
+    --gold:       #c9a455;   /* gold accent / diamond */
+    --gold-deep:  #a9842f;
+    --gold-light: #e6cf9a;
+    --cream:      #f4ead2;
+    --frame-bg:   #0c0906;   /* outer matte border */
   }
 
-  .slider-container {
-    width: 300px;
-    margin: 20px 0;
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html, body{
+    background: var(--frame-bg);
+    font-family: 'Cormorant Garamond', serif;
   }
 
-  input[type="range"] {
-    -webkit-appearance: none;
+  /* ===== Outer framed card (matches the rounded dark border in the screenshot) ===== */
+  .frame{
+    max-width: 1500px;
+    margin: 18px auto;
+    padding: 14px;
+    background: var(--frame-bg);
+    border-radius: 16px;
+  }
+
+  .card{
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    position: relative;
+    min-height: 100vh;
     width: 100%;
-    height: 6px;
-    background: #b8860b; /* dark gold */
-    border-radius: 5px;
-    outline: none;
+    display: flex;
+    flex-direction: column;
   }
 
-  /* Slider thumb */
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background: gold;
+  /* The photo lives in this absolutely-positioned <picture> behind the content,
+     instead of as a CSS background-image. This lets the browser load the
+     lightweight .webp first and only fall back to .jpg if it has to —
+     that's the other big lever for load speed, on top of file size itself. */
+  .hero-bg{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  .hero-bg img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  /* ===== NAV ===== */
+  .navbar{
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 34px 56px 0;
+  }
+
+  .logo{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo img{
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid #fff3;
-    transition: 0.2s;
+    object-fit: cover;
   }
 
-  input[type="range"]::-webkit-slider-thumb:hover {
-    background: #ffd700;
-    transform: scale(1.1);
+  .logo-text{
+    font-family: 'Playfair Display', serif;
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: var(--ink);
   }
 
-  /* Firefox */
-  input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: gold;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid #fff3;
+  .nav-links{
+    display: flex;
+    gap: 38px;
+    list-style: none;
+  }
+
+  .nav-links a{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1.6px;
+    color: var(--ink);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .buy-now{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    border: 1px solid var(--ink);
+    padding: 11px 26px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.06);
+    transition: background .25s ease;
+  }
+  .buy-now:hover{ background: rgba(255,255,255,0.18); }
+
+  /* ===== HERO CONTENT ===== */
+  .hero-content{
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding-top: 6vh;
+  }
+
+  .hero-content h1{
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    font-size: clamp(40px, 6.4vw, 92px);
+    letter-spacing: 10px;
+    color: var(--ink);
+    text-shadow: 0 2px 18px rgba(255,255,255,0.25);
+  }
+
+  .divider{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin: 22px 0 14px;
+  }
+
+  .divider .line{
+    width: 150px;
+    height: 1px;
+    background: var(--ink);
+    opacity: .55;
+  }
+
+  .divider .diamond{
+    color: var(--gold-deep);
+    font-size: 14px;
+    transform: rotate(0deg);
+  }
+
+  .water{
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: clamp(18px, 2vw, 30px);
+    letter-spacing: 9px;
+    color: var(--ink);
+    text-transform: uppercase;
+  }
+
+  .elixir{
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(28px, 4vw, 54px);
+    color: var(--ink);
+    margin-top: 6px;
+  }
+
+  /* ===== CTA BUTTONS ===== */
+  .cta-row{
+    margin-top: auto;
+    margin-bottom: 56px;
+    display: flex;
+    gap: 22px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 17px 38px;
+    border-radius: 3px;
+  }
+
+  .btn-filled{
+    background: linear-gradient(180deg, var(--gold-light), var(--gold) 60%, var(--gold-deep));
+    color: var(--ink);
+    border: 1px solid var(--gold-deep);
+  }
+
+  .btn-outline{
+    background: rgba(255,255,255,0.04);
+    color: var(--ink);
+    border: 1px solid var(--ink);
+  }
+
+  .scroll-cue{
+    margin-bottom: 28px;
+    text-align: center;
+    color: var(--ink);
+    font-size: 22px;
+    opacity: .8;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px){
+    .nav-links{ display: none; }
+    .navbar{ padding: 24px 28px 0; }
+    .hero-content{ padding-top: 10vh; }
+    .divider .line{ width: 70px; }
   }
 </style>
 </head>
-
 <body>
 
-<h2>Gold Slider</h2>
+  <div class="frame">
+    <div class="card">
+      <section class="hero">
 
-<div class="slider-container">
-  <input type="range" min="0" max="100" value="50">
-</div>
+        <picture class="hero-bg">
+          <source srcset="https://i.postimg.cc/CKzShbhr/sulis-background.jpg" type="image/webp">
+          <img src="sulis-background.jpg" alt="Sunset over the sacred spring at Sulis Minerva" loading="eager">
+        </picture>
+
+        <header class="navbar">
+          <div class="logo">
+            <img src="https://i.postimg.cc/TPwYKZ9D/sulis-icon.png" alt="Sulis Minerva logo">
+            <span class="logo-text">SULIS MINERVA</span>
+          </div>
+
+          <ul class="nav-links">
+            <li><a href="#">Our Story</a></li>
+            <li><a href="#">The Source</a></li>
+            <li><a href="#">Benefits</a></li>
+            <li><a href="#">Quality</a></li>
+            <li><a href="#">Shop</a></li>
+          </ul>
+
+          <a href="#" class="buy-now">Buy Now</a>
+        </header>
+
+        <div class="hero-content">
+          <h1>SULIS MINERVA</h1>
+
+          <div class="divider">
+            <span class="line"></span>
+            <span class="diamond">&#9670;</span>
+            <span class="line"></span>
+          </div>
+
+          <p class="water">Water</p>
+          <p class="elixir">Elixir of Life</p>
+
+          <div class="cta-row">
+            <a href="#" class="btn btn-filled">Discover the Source</a>
+            <a href="#" class="btn btn-outline">Coming Soon</a>
+          </div>
+
+          <div class="scroll-cue">&#8964;</div>
+        </div>
+
+      </section>
+    </div>
+  </div>
 
 </body>
 </html>
