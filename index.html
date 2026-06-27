@@ -277,8 +277,8 @@
   /* ── RIGHT overlay: "THE SOURCE" — floats over top-right of the waterfall ── */
   .merged-right{
     position: absolute;
-    top: 4%;
-    right: 3%;
+    top: 0;
+    right: 6%;
     width: 34%;
     min-width: 200px;
     display: flex;
@@ -294,7 +294,7 @@
   .merged-right h2{
     font-family: 'Playfair Display', serif;
     font-weight: 500;
-    font-size: clamp(14px, 2.2vw, 32px);
+    font-size: clamp(30px, 0vw, 32px);
     letter-spacing: 5px;
     color: var(--ink);
     text-transform: uppercase;
@@ -302,16 +302,26 @@
 
   .merged-right p{
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(10px, 1.1vw, 16px);
+    font-size: clamp(25px, 20vw, 16px);
     line-height: 1.9;
     color: var(--ink-soft);
   }
 
   .mini-divider{
     margin: 8px 0 12px;
-    color: var(--gold-deep);
-    font-size: clamp(10px, 1vw, 13px);
     line-height: 1;
+  }
+  
+  .mini-divider .line{
+    width: 150px;
+    height: 1px;
+    background: var(--ink);
+    opacity: .55;
+  }
+
+  .mini-divider .diamond{
+    color: var(--gold-deep);
+    font-size: 14px;
   }
 
   /* ── ICON LABELS ──
@@ -321,7 +331,7 @@
   */
   .icon-labels{
     position: absolute;
-    top: 0;
+    top: 12%;
     left: 0;
     width: 100%;
     height: 100%;
@@ -342,11 +352,11 @@
     top: 57%;
   }
 
-  .icon-label--ankh  { left: 17%; }
-  .icon-label--udja  { left: 38%; }
+  .icon-label--ankh  { left: 13%; }
+  .icon-label--udja  { left: 29%; }
   /* Seneb and Water are on the can only in this image — hidden at desktop */
-  .icon-label--seneb { display: none; }
-  .icon-label--water { display: none; }
+  .icon-label--seneb { left: 43.5%; }
+  .icon-label--water { left: 56.5%; }
 
   /* ── LEFT overlay: EXPERIENCE block ──
      Sits in the lower-left quadrant, below the icon row.
@@ -354,7 +364,7 @@
   .merged-left{
     position: absolute;
     left: 4%;
-    top: 55%;
+    top: 75%;
     width: 42%;
     min-width: 200px;
     line-height: 1.3;
@@ -383,7 +393,7 @@
   }
 
   .merged-left .btn{
-    margin-top: 10px;
+    margin-top: -50px;
     font-size: clamp(9px, 0.95vw, 13px);
     padding: clamp(9px, 1.3vw, 16px) clamp(14px, 2.2vw, 32px);
     /* Outlined style to match the reference button */
@@ -510,7 +520,11 @@
         <!-- RIGHT: The Source text (top-right gold gradient area) -->
         <div class="merged-right">
           <h2>The Source</h2>
-          <div class="mini-divider"><span>&#9670;</span></div>
+          <div class="mini-divider">
+            <span class="line"></span>
+            <span class="diamond">&#9670;</span>
+            <span class="line"></span>
+          </div>
           <p>
             Drawn from the ancient Mendip spring.<br>
             Revered for centuries.<br>
