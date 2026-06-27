@@ -23,32 +23,44 @@
   *{ margin:0; padding:0; box-sizing:border-box; }
 
   html, body{
-    background: var(--frame-bg);
+    width: 100%;
+    height: 100%;
+    background: #1a1208; /* visible only for a split second before the gradient/photo paint */
     font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
   }
 
-  /* ===== Outer framed card (matches the rounded dark border in the screenshot) ===== */
+  /* No outer frame anymore — the hero now runs edge-to-edge, full screen. */
   .frame{
-    max-width: 1500px;
-    margin: 18px auto;
-    padding: 14px;
-    background: var(--frame-bg);
-    border-radius: 16px;
+    width: 100%;
   }
 
   .card{
     position: relative;
-    border-radius: 8px;
-    overflow: hidden;
   }
 
   /* ===== HERO ===== */
   .hero{
     position: relative;
+    width: 100vw;
     min-height: 100vh;
-    width: 100%;
+    min-height: 100dvh; /* accounts for mobile browser address bars */
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+
+    /* Gradient sampled from the photo's own sky → water tones. If the photo's
+       aspect ratio doesn't exactly match the screen, this shows at the edges
+       instead of cropping the image — so it reads as a seamless continuation
+       of the sky and water rather than a hard letterbox bar. */
+    background: linear-gradient(
+      180deg,
+      #eec682 0%,
+      #d9ab5e 30%,
+      #a9772f 55%,
+      #6b4717 78%,
+      #4a2f0f 100%
+    );
   }
 
   /* The photo lives in this absolutely-positioned <picture> behind the content,
@@ -65,7 +77,8 @@
   .hero-bg img{
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    /* contain (not cover) = the entire photo is always visible, never cropped */
+    object-fit: contain;
     object-position: center;
     display: block;
   }
@@ -235,6 +248,35 @@
     opacity: .8;
   }
 
+  /* ===== "Coming soon" tooltip (shown while links are temporarily disabled) ===== */
+  .btn, .buy-now{ position: relative; }
+
+  .coming-soon-tip{
+    position: absolute;
+    bottom: 112%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    animation: tipFade 1.6s ease forwards;
+  }
+
+  @keyframes tipFade{
+    0%   { opacity: 0; transform: translate(-50%, 4px); }
+    15%  { opacity: 1; transform: translate(-50%, 0); }
+    80%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
   /* ===== RESPONSIVE ===== */
   @media (max-width: 900px){
     .nav-links{ display: none; }
@@ -251,7 +293,7 @@
       <section class="hero">
 
         <picture class="hero-bg">
-          <source srcset="sulis-background.jpg" type="image/webp">
+          <source srcset="sulis-background.webp" type="image/webp">
           <img src="sulis-background.jpg" alt="Sunset over the sacred spring at Sulis Minerva" loading="eager">
         </picture>
 
@@ -269,7 +311,7 @@
             <li><a href="#">Shop</a></li>
           </ul>
 
-          <a href="#" class="buy-now">Buy Now</a>
+          <a href="https://YOUR-DOMAIN.com/shop" class="buy-now" data-coming-soon>Buy Now</a>
         </header>
 
         <div class="hero-content">
@@ -285,8 +327,8 @@
           <p class="elixir">Elixir of Life</p>
 
           <div class="cta-row">
-            <a href="#" class="btn btn-filled">Discover the Source</a>
-            <a href="#" class="btn btn-outline">Coming Soon</a>
+            <a href="https://YOUR-DOMAIN.com/the-source" class="btn btn-filled" data-coming-soon>Discover the Source</a>
+            <a href="https://YOUR-DOMAIN.com/shop" class="btn btn-outline" data-coming-soon>Coming Soon</a>
           </div>
 
           <div class="scroll-cue">&#8964;</div>
@@ -295,6 +337,30 @@
       </section>
     </div>
   </div>
+
+  <script>
+    // ── Link switch ──────────────────────────────────────────────────────
+    // The buttons already point to their real destination URLs (see the
+    // href values above — just swap "YOUR-DOMAIN.com" for your actual
+    // domains). They're temporarily disabled below so nothing goes live
+    // until you're ready. When the destination pages exist, change this
+    // single value to `true` and every button will work immediately —
+    // no other edits needed.
+    const LINKS_ENABLED = false;
+
+    document.querySelectorAll('[data-coming-soon]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        if (LINKS_ENABLED) return; // real navigation proceeds once enabled
+        e.preventDefault();
+        if (link.querySelector('.coming-soon-tip')) return;
+        const tip = document.createElement('span');
+        tip.className = 'coming-soon-tip';
+        tip.textContent = 'Coming soon';
+        link.appendChild(tip);
+        setTimeout(function () { tip.remove(); }, 1600);
+      });
+    });
+  </script>
 
 </body>
 </html>
