@@ -17,27 +17,20 @@
     --gold-deep:  #a9842f;
     --gold-light: #e6cf9a;
     --cream:      #f4ead2;
-    --frame-bg:   #0c0906;   /* outer matte border */
+    --frame-bg:   #0c0906;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
 
   html, body{
     width: 100%;
-    height: 100%;
-    background: #1a1208; /* visible only for a split second before the gradient/photo paint */
+    background: var(--gold-light);
     font-family: 'Cormorant Garamond', serif;
     overflow-x: hidden;
   }
 
-  /* No outer frame anymore — the hero now runs edge-to-edge, full screen. */
-  .frame{
-    width: 100%;
-  }
-
-  .card{
-    position: relative;
-  }
+  .frame{ width: 100%; }
+  .card{ position: relative; }
 
   /* ===== HERO ===== */
   .hero{
@@ -48,25 +41,9 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-
-    /* Gradient sampled from the photo's own sky → water tones. If the photo's
-       aspect ratio doesn't exactly match the screen, this shows at the edges
-       instead of cropping the image — so it reads as a seamless continuation
-       of the sky and water rather than a hard letterbox bar. */
-    background: linear-gradient(
-      180deg,
-      #eec682 0%,
-      #d9ab5e 30%,
-      #a9772f 55%,
-      #6b4717 78%,
-      #4a2f0f 100%
-    );
+    background: var(--gold-deep); /* shows only for an instant while the photo loads */
   }
 
-  /* The photo lives in this absolutely-positioned <picture> behind the content,
-     instead of as a CSS background-image. This lets the browser load the
-     lightweight .webp first and only fall back to .jpg if it has to —
-     that's the other big lever for load speed, on top of file size itself. */
   .hero-bg{
     position: absolute;
     inset: 0;
@@ -77,8 +54,9 @@
   .hero-bg img{
     width: 100%;
     height: 100%;
-    /* contain (not cover) = the entire photo is always visible, never cropped */
-    object-fit: contain;
+    /* cover = the photo is maximised edge-to-edge, filling the full width
+       of the screen (this is the "no pillarboxing" version you asked for) */
+    object-fit: cover;
     object-position: center;
     display: block;
   }
@@ -162,7 +140,7 @@
   .hero-content h1{
     font-family: 'Playfair Display', serif;
     font-weight: 500;
-    font-size: clamp(40px, 6.4vw, 92px);
+    font-size: clamp(40px, 0vw, 92px);
     letter-spacing: 10px;
     color: var(--ink);
     text-shadow: 0 2px 18px rgba(255,255,255,0.25);
@@ -186,7 +164,6 @@
   .divider .diamond{
     color: var(--gold-deep);
     font-size: 14px;
-    transform: rotate(0deg);
   }
 
   .water{
@@ -219,13 +196,14 @@
 
   .btn{
     font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
     text-decoration: none;
     padding: 17px 38px;
     border-radius: 3px;
+    display: inline-block;
   }
 
   .btn-filled{
@@ -235,9 +213,9 @@
   }
 
   .btn-outline{
-    background: rgba(255,255,255,0.04);
-    color: var(--ink);
-    border: 1px solid var(--ink);
+    background: rgba(255, 255, 255, 0.04);
+    color: #c9a455;
+    border: 2px solid #c9a455;
   }
 
   .scroll-cue{
@@ -248,7 +226,7 @@
     opacity: .8;
   }
 
-  /* ===== "Coming soon" tooltip (shown while links are temporarily disabled) ===== */
+  /* ===== "Coming soon" tooltip ===== */
   .btn, .buy-now{ position: relative; }
 
   .coming-soon-tip{
@@ -277,12 +255,161 @@
     100% { opacity: 0; }
   }
 
+  /* ===== THE SOURCE ===== */
+  /* Photo runs full width at its native aspect ratio (no cropping at all —
+     width:100%/height:auto means the whole photo is always shown intact).
+     The text panel sits on TOP of it as an absolutely-positioned overlay,
+     so nothing about the photo itself is cut, scaled oddly, or hidden. */
+  .section-source{
+    position: relative;
+    width: 100%;
+    line-height: 0; /* removes the tiny gap browsers add under inline images */
+  }
+
+  .source-photo-img{
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .source-text{
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 42%;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4% 4%;
+    background: linear-gradient(
+      90deg,
+      rgba(230,207,154,0) 0%,
+      rgba(230,207,154,0.55) 28%,
+      rgba(201,164,85,0.92) 58%,
+      var(--gold) 100%
+    );
+  }
+
+  .source-text h2{
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    font-size: clamp(18px, 2.6vw, 38px);
+    letter-spacing: 5px;
+    color: var(--ink);
+    text-transform: uppercase;
+  }
+
+  .mini-divider{
+    margin: 12px 0 16px;
+    color: var(--gold-deep);
+    font-size: clamp(10px, 1vw, 13px);
+  }
+
+  .source-text p{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(11px, 1.3vw, 17px);
+    line-height: 1.8;
+    color: var(--ink-soft);
+  }
+
+  /* ===== EXPERIENCE ===== */
+  /* Your photo already has the icon row and the can rendered into it, so
+     there's no separate icon/can markup here anymore — just the full,
+     uncropped photo with the heading and button floated over the open
+     water on the lower-left, where the photo has clear space. */
+  .section-experience{
+    position: relative;
+    width: 100%;
+    line-height: 0;
+  }
+
+  .experience-photo-img{
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .experience-text{
+    position: absolute;
+    left: 6%;
+    bottom: 7%;
+    width: 40%;
+    min-width: 220px;
+  }
+
+  .eyebrow{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(9px, 1vw, 14px);
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .exp-heading{
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    font-size: clamp(16px, 3vw, 40px);
+    line-height: 1.15;
+    letter-spacing: 1.5px;
+    color: var(--ink);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .experience-text .btn{
+    margin-top: 4px;
+    font-size: clamp(9px, 0.9vw, 14px);
+    padding: clamp(8px, 1.2vw, 17px) clamp(14px, 2.4vw, 38px);
+  }
+
+  /* ===== TAGLINE BAND ===== */
+  .tagline-band{
+    position: relative;
+    text-align: center;
+    padding: 46px 24px 52px;
+    background: linear-gradient(180deg, var(--gold-light), var(--gold) 75%);
+  }
+
+  .moon-icon{
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .tagline-text{
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(16px, 1.8vw, 24px);
+    letter-spacing: 1.5px;
+    color: var(--ink);
+  }
+  .tagline-text .diamond{
+    color: var(--gold-deep);
+    font-size: 12px;
+    margin: 0 16px;
+    vertical-align: middle;
+  }
+
   /* ===== RESPONSIVE ===== */
   @media (max-width: 900px){
     .nav-links{ display: none; }
     .navbar{ padding: 24px 28px 0; }
     .hero-content{ padding-top: 0vh; }
     .divider .line{ width: 70px; }
+
+    .source-text{ width: 52%; padding: 3% 3%; }
+    .experience-text{ width: 48%; }
+  }
+
+  @media (max-width: 560px){
+    .source-text{ width: 60%; }
+    .experience-text{ left: 4%; width: 52%; }
   }
 </style>
 </head>
@@ -290,6 +417,8 @@
 
   <div class="frame">
     <div class="card">
+
+      <!-- ============ HERO ============ -->
       <section class="hero">
 
         <picture class="hero-bg">
@@ -335,22 +464,64 @@
         </div>
 
       </section>
+
+      <!-- ============ THE SOURCE ============ -->
+      <section class="section-source">
+        <picture>
+          <source srcset="sulis-source-bg.webp" type="image/webp">
+          <img class="source-photo-img" src="sulis-source-bg.jpg" alt="Sunlit waterfall at the Mendip spring">
+        </picture>
+        <div class="source-text">
+          <h2>The Source</h2>
+          <div class="mini-divider"><span>&#9670;</span></div>
+          <p>
+            Drawn from the ancient Mendip spring.<br>
+            Revered for centuries.<br>
+            Presented for today.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ EXPERIENCE ============ -->
+      <!-- This photo already has the icon row (Ankh / Udja / Seneb / water
+           drop) and the can rendered into it, so only the heading + button
+           are added here as an overlay — nothing else needed from markup. -->
+      <section class="section-experience">
+        <picture>
+          <source srcset="sulis-experience-bg.webp" type="image/webp">
+          <img class="experience-photo-img" src="sulis-experience-bg.jpg" alt="Sulis Minerva can resting in golden water among rocks, with Ankh, Udja, Seneb and water-drop icons">
+        </picture>
+
+        <div class="experience-text">
+          <p class="eyebrow">Pure. Powerful. Precious.</p>
+          <h2 class="exp-heading">Experience<br>Sulis Minerva</h2>
+          <div class="mini-divider"><span>&#9670;</span></div>
+          <a href="https://YOUR-DOMAIN.com/the-source" class="btn btn-filled" data-coming-soon>Experience Sulis Minerva</a>
+        </div>
+      </section>
+
+      <!-- ============ TAGLINE BAND ============ -->
+      <section class="tagline-band">
+        <div class="moon-icon">&#9789;</div>
+        <p class="tagline-text">
+          <span class="diamond">&#9670;</span>For where I am the abundance is with me.<span class="diamond">&#9670;</span>
+        </p>
+      </section>
+
     </div>
   </div>
 
   <script>
-    // ── Link switch ──────────────────────────────────────────────────────
     // The buttons already point to their real destination URLs (see the
     // href values above — just swap "YOUR-DOMAIN.com" for your actual
     // domains). They're temporarily disabled below so nothing goes live
     // until you're ready. When the destination pages exist, change this
-    // single value to `true` and every button will work immediately —
-    // no other edits needed.
+    // single value to `true` and every button will work immediately.
     const LINKS_ENABLED = false;
 
     document.querySelectorAll('[data-coming-soon]').forEach(function (link) {
       link.addEventListener('click', function (e) {
-        if (LINKS_ENABLED) return; // real navigation proceeds once enabled
+        if (LINKS_ENABLED) return;
         e.preventDefault();
         if (link.querySelector('.coming-soon-tip')) return;
         const tip = document.createElement('span');
