@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  viewport-fit=cover keeps the content edge-to-edge on notched phones.
+  The width=device-width line is what prevents orientation reflow on most
+  browsers — combined with the JS lock below it covers all bases.
+-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Sulis Minerva | Elixir of Life</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,6 +15,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+  /* ============================================================
+     DESIGN TOKENS
+  ============================================================ */
   :root{
     --ink:        #3a2613;
     --ink-soft:   #4a311c;
@@ -19,32 +27,16 @@
     --cream:      #f4ead2;
     --frame-bg:   #0c0906;
 
-    /* =====================================================
-       DIVIDER LINE LENGTHS — adjust these to taste
-       ===================================================== */
-
-    /* Hero section (Water / Elixir of Life) */
+    /* ── Desktop divider line lengths ── */
     --line-hero:            150px;
-
-    /* "The Source" overlay (top-right) */
     --line-source:           80px;
-
-    /* "Experience Sulis Minerva" block (bottom-left) */
     --line-experience:       220px;
-
-    /* Icon label dividers — set each independently */
-    --line-label-ankh:       80px;   /* Everlasting Life — longest word, least gap to neighbour */
-    --line-label-udja:       80px;   /* Prosperity */
-    --line-label-seneb:      65px;   /* Health — shortest word, more gap either side */
-    --line-label-water:      65px;   /* Water */
-
-    /* Tagline flanking lines (left & right of the quote) */
+    --line-label-ankh:       80px;
+    --line-label-udja:       80px;
+    --line-label-seneb:      65px;
+    --line-label-water:      65px;
     --line-tagline:         120px;
-
-    /* Tagline below divider */
     --line-tagline-below:   120px;
-
-    /* How far left to shift the Experience divider relative to the heading block */
     --experience-divider-shift: -90px;
   }
 
@@ -60,7 +52,63 @@
   .frame{ width: 100%; }
   .card{ position: relative; }
 
-  /* ===== HERO ===== */
+
+  /* ============================================================
+     SHARED DIVIDER STRUCTURE
+  ============================================================ */
+  .divider,
+  .mini-divider{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .divider{ margin: 22px 0 14px; }
+  .mini-divider{ margin: 9px 0 11px; width: 100%; }
+
+  .divider .line,
+  .mini-divider .line{
+    height: 1px;
+    background: var(--ink);
+    opacity: .55;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .divider .diamond,
+  .mini-divider .diamond{
+    color: var(--gold-deep);
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .divider .line                     { width: var(--line-hero); }
+  .merged-right .mini-divider .line  { width: var(--line-source); }
+  .merged-left  .mini-divider        { margin-left: var(--experience-divider-shift); }
+  .merged-left  .mini-divider .line  { width: var(--line-experience); }
+
+  .icon-label-group--ankh  .mini-divider .line { width: var(--line-label-ankh);  }
+  .icon-label-group--udja  .mini-divider .line { width: var(--line-label-udja);  }
+  .icon-label-group--seneb .mini-divider .line { width: var(--line-label-seneb); }
+  .icon-label-group--water .mini-divider .line { width: var(--line-label-water); }
+
+  .tagline-text .line      { width: var(--line-tagline); }
+  .tagline-below .line     { width: var(--line-tagline-below); }
+
+
+  /* ============================================================
+     ██████╗ ███████╗███████╗██╗  ██╗████████╗ ██████╗ ██████╗
+     ██╔══██╗██╔════╝██╔════╝██║ ██╔╝╚══██╔══╝██╔═══██╗██╔══██╗
+     ██║  ██║█████╗  ███████╗█████╔╝    ██║   ██║   ██║██████╔╝
+     ██║  ██║██╔══╝  ╚════██║██╔═██╗    ██║   ██║   ██║██╔═══╝
+     ██████╔╝███████╗███████║██║  ██╗   ██║   ╚██████╔╝██║
+     ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝
+     Hidden on mobile (≤768 px)
+  ============================================================ */
+
+  /* ── HERO ── */
   .hero{
     position: relative;
     width: 100vw;
@@ -87,7 +135,7 @@
     display: block;
   }
 
-  /* ===== NAV ===== */
+  /* ── NAV ── */
   .navbar{
     position: relative;
     z-index: 2;
@@ -102,14 +150,12 @@
     align-items: center;
     gap: 14px;
   }
-
   .logo img{
     width: 46px;
     height: 46px;
     border-radius: 50%;
     object-fit: cover;
   }
-
   .logo-text{
     font-family: 'Playfair Display', serif;
     font-size: 21px;
@@ -123,7 +169,6 @@
     gap: 38px;
     list-style: none;
   }
-
   .nav-links a{
     font-family: 'Cormorant Garamond', serif;
     font-size: 14px;
@@ -147,10 +192,11 @@
     border-radius: 2px;
     background: rgba(255,255,255,0.06);
     transition: background .25s ease;
+    position: relative;
   }
   .buy-now:hover{ background: rgba(255,255,255,0.18); }
 
-  /* ===== HERO CONTENT ===== */
+  /* ── HERO CONTENT ── */
   .hero-content{
     position: relative;
     z-index: 2;
@@ -172,73 +218,6 @@
     text-shadow: 0 2px 18px rgba(255,255,255,0.25);
   }
 
-  /* ===== SHARED DIVIDER STRUCTURE ===== */
-  /* All dividers share the same flex layout.
-     Line widths are controlled per-context via the variables above. */
-  .divider,
-  .mini-divider{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-  }
-
-  .divider{ margin: 22px 0 14px; }
-  .mini-divider{ margin: 9px 0 11px; width: 100%; }
-
-  /* Default line — overridden per context below */
-  .divider .line,
-  .mini-divider .line{
-    height: 1px;
-    background: var(--ink);
-    opacity: .55;
-    display: block;
-    flex-shrink: 0;
-  }
-
-  .divider .diamond,
-  .mini-divider .diamond{
-    color: var(--gold-deep);
-    font-size: 16px;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-
-  /* ── Hero divider lines ── */
-  .divider .line{
-    width: var(--line-hero);
-  }
-
-  /* ── Source overlay divider lines ── */
-  .merged-right .mini-divider .line{
-    width: var(--line-source);
-  }
-
-  /* ── Experience block divider lines ── */
-  .merged-left .mini-divider{
-    margin-left: var(--experience-divider-shift);
-  }
-
-  .merged-left .mini-divider .line{
-    width: var(--line-experience);
-  }
-
-  /* ── Icon label divider lines — each icon group independently ── */
-  .icon-label-group--ankh  .mini-divider .line { width: var(--line-label-ankh);  }
-  .icon-label-group--udja  .mini-divider .line { width: var(--line-label-udja);  }
-  .icon-label-group--seneb .mini-divider .line { width: var(--line-label-seneb); }
-  .icon-label-group--water .mini-divider .line { width: var(--line-label-water); }
-
-  /* ── Tagline flanking lines ── */
-  .tagline-text .line{
-    width: var(--line-tagline);
-  }
-
-  /* ── Tagline below divider lines ── */
-  .tagline-below .line{
-    width: var(--line-tagline-below);
-  }
-
   .water{
     font-family: 'Cormorant Garamond', serif;
     font-weight: 600;
@@ -257,7 +236,7 @@
     margin-top: 6px;
   }
 
-  /* ===== CTA BUTTONS ===== */
+  /* ── CTA BUTTONS ── */
   .cta-row{
     margin-top: auto;
     margin-bottom: 56px;
@@ -279,15 +258,13 @@
     display: inline-block;
     position: relative;
   }
-
   .btn-filled{
     background: linear-gradient(180deg, var(--gold-light), var(--gold) 60%, var(--gold-deep));
     color: var(--ink);
     border: 1px solid var(--gold-deep);
   }
-
   .btn-outline{
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255,255,255,0.04);
     color: #c9a455;
     border: 2px solid #c9a455;
   }
@@ -300,9 +277,7 @@
     opacity: .8;
   }
 
-  /* ===== "Coming soon" tooltip ===== */
-  .buy-now{ position: relative; }
-
+  /* ── Coming-soon tooltip ── */
   .coming-soon-tip{
     position: absolute;
     bottom: 112%;
@@ -321,7 +296,6 @@
     pointer-events: none;
     animation: tipFade 1.6s ease forwards;
   }
-
   @keyframes tipFade{
     0%   { opacity: 0; transform: translate(-50%, 4px); }
     15%  { opacity: 1; transform: translate(-50%, 0); }
@@ -329,20 +303,18 @@
     100% { opacity: 0; }
   }
 
-  /* ===== MERGED SECTION ===== */
+  /* ── MERGED SECTION ── */
   .section-merged{
     position: relative;
     width: 100%;
     line-height: 0;
   }
-
   .merged-photo-img{
     width: 100%;
     height: auto;
     display: block;
   }
 
-  /* RIGHT overlay — "THE SOURCE" floats over top-right of the waterfall */
   .merged-right{
     position: absolute;
     top: 0;
@@ -357,7 +329,6 @@
     padding: 2% 3%;
     line-height: 1.5;
   }
-
   .merged-right h2{
     font-family: 'Playfair Display', serif;
     font-weight: 500;
@@ -366,7 +337,6 @@
     color: var(--ink);
     text-transform: uppercase;
   }
-
   .merged-right p{
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(10px, 1.1vw, 16px);
@@ -383,7 +353,6 @@
     height: 100%;
     pointer-events: none;
   }
-
   .icon-label-group{
     position: absolute;
     transform: translateX(-50%);
@@ -393,7 +362,6 @@
     gap: 4px;
     top: 57%;
   }
-
   .icon-label-group--ankh  { left: 13%;   }
   .icon-label-group--udja  { left: 29%;   }
   .icon-label-group--seneb { left: 43.5%; }
@@ -410,12 +378,8 @@
     white-space: nowrap;
     line-height: 1.2;
   }
+  .icon-label-group .mini-divider{ margin: 2px 0 0; }
 
-  .icon-label-group .mini-divider{
-    margin: 2px 0 0;
-  }
-
-  /* LEFT overlay — EXPERIENCE block */
   .merged-left{
     position: absolute;
     left: 4%;
@@ -424,7 +388,6 @@
     min-width: 200px;
     line-height: 1.3;
   }
-
   .eyebrow{
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(9px, 1vw, 14px);
@@ -434,7 +397,6 @@
     color: var(--ink-soft);
     margin-bottom: 6px;
   }
-
   .exp-heading{
     font-family: 'Playfair Display', serif;
     font-weight: 600;
@@ -445,9 +407,8 @@
     text-transform: uppercase;
     margin-bottom: 0;
   }
-
   .merged-left .btn{
-    margin-top: 0px;
+    margin-top: 0;
     font-size: clamp(9px, 0.95vw, 13px);
     padding: clamp(9px, 1.3vw, 16px) clamp(14px, 2.2vw, 32px);
     background: transparent;
@@ -455,7 +416,24 @@
     border: 1px solid #c9a455;
   }
 
-  /* ===== TAGLINE BAND ===== */
+  /* ── OVERLAY IMAGE ── */
+  .merged-overlay-img{
+    position: absolute;
+    top: 0%;
+    left: 54%;
+    width: 46%;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .merged-overlay-img img{
+    width: 100%;
+    display: block;
+    clip-path: inset(3% 3% 3% 3%);
+    filter: brightness(1) hue-rotate(8deg);
+    mix-blend-mode: multiply;
+  }
+
+  /* ── TAGLINE BAND ── */
   .tagline-band{
     position: relative;
     text-align: center;
@@ -463,13 +441,11 @@
     background: linear-gradient(180deg, var(--gold-light), var(--gold) 75%);
     line-height: 1.4;
   }
-
   .moon-icon{
     font-size: 22px;
     color: var(--ink);
     margin-bottom: 12px;
   }
-
   .tagline-text{
     font-family: 'Playfair Display', serif;
     font-style: italic;
@@ -482,7 +458,6 @@
     gap: 18px;
     flex-wrap: wrap;
   }
-
   .tagline-text .line{
     height: 1px;
     background: var(--ink);
@@ -490,42 +465,404 @@
     display: block;
     flex-shrink: 0;
   }
-
   .tagline-text .diamond{
     color: var(--gold-deep);
     font-size: 16px;
     flex-shrink: 0;
     font-style: normal;
   }
+  .tagline-below{ margin-top: 16px; }
 
-  .tagline-below{
-    margin-top: 16px;
-  }
-  /* ===== MERGED OVERLAY IMAGE ===== */
-    .merged-overlay-img {
-    position: absolute;
-    top: 0%;
-    left: 54%;
-    width: 46%;
-    z-index: 1;
-    pointer-events: none;
-  }
-  
-  /* Tint + trim */
-  .merged-overlay-img img {
-    width: 100%;
-    display: block;
-  
-    /* --- Trim edges inward (change 3% to whatever amount you want) --- */
-    clip-path: inset(3% 3% 3% 3%);
-  
-    /* --- Tint only the visible pixels --- */
-    filter: brightness(1) hue-rotate(8deg);
-    mix-blend-mode: multiply;
-  }
 
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 900px){
+  /* ============================================================
+     ███╗   ███╗ ██████╗ ██████╗ ██╗██╗     ███████╗
+     ████╗ ████║██╔═══██╗██╔══██╗██║██║     ██╔════╝
+     ██╔████╔██║██║   ██║██████╔╝██║██║     █████╗
+     ██║╚██╔╝██║██║   ██║██╔══██╗██║██║     ██╔══╝
+     ██║ ╚═╝ ██║╚██████╔╝██████╔╝██║███████╗███████╗
+     ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚═╝╚══════╝╚══════╝
+     Shown ONLY on screens ≤ 768 px wide
+  ============================================================ */
+
+  /* Hide mobile shell by default */
+  .mobile-layout { display: none; }
+
+  @media (max-width: 768px) {
+
+    /* ── Swap visibility ── */
+    .desktop-layout { display: none !important; }
+    .mobile-layout  { display: block; }
+
+    /* ── MOBILE HERO ── */
+    .m-hero {
+      position: relative;
+      width: 100%;
+      min-height: 100svh;          /* svh = small viewport height, avoids browser-chrome jumps */
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--gold-deep);
+    }
+
+    .m-hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .m-hero-bg img {
+      width: 100%;
+      height: 83%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    /* ── Mobile Nav ── */
+    .m-navbar {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 22px 0;
+    }
+
+    .m-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .m-logo img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .m-logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      color: var(--ink);
+    }
+
+    .m-buy-now {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--ink);
+      padding: 9px 18px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.06);
+      position: relative;
+    }
+
+    /* ── Mobile Hero Body ── */
+    .m-hero-body {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px 20px 0;
+      gap: 4px;
+      top: -170px;
+    }
+
+    .m-hero-body h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+      font-size: clamp(28px, 8vw, 46px);
+      letter-spacing: 7px;
+      color: var(--ink);
+      text-shadow: 0 2px 14px rgba(255,255,255,0.2);
+    }
+
+    .m-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 14px 0 10px;
+    }
+    .m-divider .line {
+      width: 60px;
+      height: 1px;
+      background: var(--ink);
+      opacity: .5;
+      display: block;
+    }
+    .m-divider .diamond {
+      color: var(--gold-deep);
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .m-water {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: clamp(13px, 3.5vw, 20px);
+      letter-spacing: 7px;
+      color: var(--ink);
+      text-transform: uppercase;
+    }
+
+    .m-elixir {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(22px, 6vw, 36px);
+      color: var(--ink);
+      margin-top: 4px;
+    }
+
+    /* ── Mobile CTA ── */
+    .m-cta-row {
+      margin-top: auto;
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+      width: 100%;
+      padding: 0 28px;
+    }
+
+    .m-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 15px 32px;
+      border-radius: 3px;
+      display: block;
+      text-align: center;
+      width: 100%;
+      position: relative;
+    }
+    .m-btn-filled {
+      background: linear-gradient(180deg, var(--gold-light), var(--gold) 60%, var(--gold-deep));
+      color: var(--ink);
+      border: 1px solid var(--gold-deep);
+    }
+    .m-btn-outline {
+      background: rgba(255,255,255,0.04);
+      color: #c9a455;
+      border: 2px solid #c9a455;
+    }
+
+    .m-scroll-cue {
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--ink);
+      font-size: 20px;
+      opacity: .75;
+    }
+
+    /* ── MOBILE SOURCE SECTION ── */
+    .m-source-section {
+      background: linear-gradient(180deg, var(--gold-light) 0%, var(--cream) 100%);
+      padding: 48px 28px 36px;
+      text-align: center;
+    }
+
+    .m-source-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 500;
+      font-size: 26px;
+      letter-spacing: 5px;
+      color: var(--ink);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .m-source-section p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      line-height: 2;
+      color: var(--ink-soft);
+      margin-top: 10px;
+    }
+
+    /* ── MOBILE PHOTO STRIP (now contains overlays) ── */
+    .m-photo-strip {
+      width: 100%;
+      position: relative;      /* anchor for all absolute children */
+      line-height: 0;
+      overflow: hidden;
+    }
+    .m-photo-strip > img {     /* background waterfall */
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    /* Can overlay — tweak top/left/width to reposition */
+    .m-can-overlay {
+      position: absolute;
+      top: -1%;
+      left: 53.5%;
+      width: 47%;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .m-can-overlay img {
+      width: 100%;
+      display: block;
+      clip-path: inset(3% 3% 3% 3%);
+      filter: brightness(1) hue-rotate(8deg);
+      mix-blend-mode: multiply;
+    }
+
+    /* Container that sits over the whole photo */
+    .m-photo-icons {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      top: 20%;
+    }
+
+    /* Individual label — position each via inline style="top:%; left:%" */
+    .m-photo-icon-label {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .m-icon-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--ink);
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .m-icon-divider {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .m-icon-divider .line {
+      width: 18px;
+      height: 1px;
+      background: var(--ink);
+      opacity: .5;
+    }
+    .m-icon-divider .diamond {
+      color: var(--gold-deep);
+      font-size: 9px;
+      line-height: 1;
+    }
+
+    /* ── MOBILE EXPERIENCE BLOCK ── */
+    .m-experience-section {
+      padding: 44px 28px 48px;
+      background: linear-gradient(180deg, var(--cream), var(--gold-light));
+      text-align: center;
+    }
+
+    .m-eyebrow {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+    }
+
+    .m-exp-heading {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: clamp(32px, 9vw, 50px);
+      line-height: 1.05;
+      letter-spacing: 1px;
+      color: var(--ink);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .m-exp-btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #c9a455;
+      text-decoration: none;
+      border: 1px solid #c9a455;
+      padding: 14px 28px;
+      border-radius: 3px;
+      display: inline-block;
+      position: relative;
+    }
+
+    /* ── MOBILE TAGLINE ── */
+    .m-tagline-band {
+      background: linear-gradient(180deg, var(--gold-light), var(--gold) 75%);
+      padding: 32px 20px 40px;
+      text-align: center;
+    }
+
+    .m-moon-icon {
+      font-size: 22px;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+
+    .m-tagline-text {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(12px, 0vw, 20px);
+      letter-spacing: 1px;
+      color: var(--ink);
+      line-height: 1.6;
+      padding: 0 10px;
+    }
+
+    .m-tagline-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 18px auto 0;
+    }
+    .m-tagline-divider .line {
+      width: 60px;
+      height: 1px;
+      background: var(--ink);
+      opacity: .5;
+    }
+    .m-tagline-divider .diamond {
+      color: var(--gold-deep);
+      font-size: 14px;
+    }
+
+  } /* end @media (max-width: 768px) */
+
+
+  /* ============================================================
+     TABLET TWEAKS (desktop layout, tighter screen)
+  ============================================================ */
+  @media (min-width: 769px) and (max-width: 1024px){
     .nav-links{ display: none; }
     .navbar{ padding: 24px 28px 0; }
     .merged-right{ width: 42%; top: 3%; }
@@ -533,83 +870,177 @@
     .exp-heading{ font-size: clamp(18px, 3.5vw, 48px); }
   }
 
-  @media (max-width: 560px){
-    .merged-right{ width: 54%; top: 2%; right: 1%; }
-    .merged-left{ left: 3%; width: 56%; top: 76%; }
-    .exp-heading{ font-size: clamp(16px, 5vw, 36px); }
-    .icon-label{ font-size: clamp(6px, 1.8vw, 10px); letter-spacing: 1px; }
-    .tagline-text{ gap: 10px; }
-  }
 </style>
 </head>
 <body>
 
+
   <div class="frame">
     <div class="card">
 
-      <!-- ============ HERO ============ -->
-      <section class="hero">
 
-        <picture class="hero-bg">
-          <source srcset="sulis-background.jpg" type="image/webp">
-          <img src="sulis-background.jpg" alt="Sunset over the sacred spring at Sulis Minerva" loading="eager">
-        </picture>
+      <!-- ====================================================
+           DESKTOP LAYOUT  (hidden on ≤ 768 px)
+      ==================================================== -->
+      <div class="desktop-layout">
 
-        <header class="navbar">
-          <div class="logo">
-            <img src="sulis-icon.png" alt="Sulis Minerva logo">
-            <span class="logo-text">SULIS MINERVA</span>
+        <!-- ── HERO ── -->
+        <section class="hero">
+          <picture class="hero-bg">
+            <source srcset="sulis-background.jpg" type="image/webp">
+            <img src="sulis-background.jpg" alt="Sunset over the sacred spring at Sulis Minerva" loading="eager">
+          </picture>
+
+          <header class="navbar">
+            <div class="logo">
+              <img src="sulis-icon.png" alt="Sulis Minerva logo">
+              <span class="logo-text">SULIS MINERVA</span>
+            </div>
+            <ul class="nav-links">
+              <li><a href="#">Our Story</a></li>
+              <li><a href="#">The Source</a></li>
+              <li><a href="#">Benefits</a></li>
+              <li><a href="#">Quality</a></li>
+              <li><a href="#">Shop</a></li>
+            </ul>
+            <a href="https://YOUR-DOMAIN.com/shop" class="buy-now" data-coming-soon>Buy Now</a>
+          </header>
+
+          <div class="hero-content">
+            <h1>SULIS MINERVA</h1>
+            <div class="divider">
+              <span class="line"></span>
+              <span class="diamond">&#9670;</span>
+              <span class="line"></span>
+            </div>
+            <p class="water">Water</p>
+            <p class="elixir">Elixir of Life</p>
+
+            <div class="cta-row">
+              <a href="https://YOUR-DOMAIN.com/the-source" class="btn btn-filled" data-coming-soon>Discover the Source</a>
+              <a href="https://YOUR-DOMAIN.com/shop"       class="btn btn-outline" data-coming-soon>Coming Soon</a>
+            </div>
+            <div class="scroll-cue">&#8964;</div>
+          </div>
+        </section>
+
+        <!-- ── MERGED SECTION ── -->
+        <section class="section-merged">
+          <div class="merged-overlay-img">
+            <img src="merged-overlay-img.png" alt="Sulis Minerva Can" loading="eager">
+          </div>
+          <picture>
+            <source class="merged-photo-img" srcset="sulis-merged-bg.jpg" type="image/webp">
+            <img class="merged-photo-img" src="sulis-merged-bg.jpg"
+                 alt="Sulis Minerva — the Mendip source waterfall and the can with Egyptian symbols" loading="eager">
+          </picture>
+
+          <div class="merged-right">
+            <h2>The Source</h2>
+            <div class="mini-divider">
+              <span class="line"></span>
+              <span class="diamond">&#9670;</span>
+              <span class="line"></span>
+            </div>
+            <p>
+              Drawn from the ancient Mendip spring.<br>
+              Revered for centuries.<br>
+              Presented for today.
+            </p>
           </div>
 
-          <ul class="nav-links">
-            <li><a href="#">Our Story</a></li>
-            <li><a href="#">The Source</a></li>
-            <li><a href="#">Benefits</a></li>
-            <li><a href="#">Quality</a></li>
-            <li><a href="#">Shop</a></li>
-          </ul>
+          <div class="merged-left">
+            <p class="eyebrow">Pure. Powerful. Precious.</p>
+            <h2 class="exp-heading">Experience<br>Sulis Minerva</h2>
+            <div class="mini-divider">
+              <span class="line"></span>
+              <span class="diamond">&#9670;</span>
+              <span class="line"></span>
+            </div>
+            <a href="https://YOUR-DOMAIN.com/the-source" class="btn" data-coming-soon>Experience Sulis Minerva</a>
+          </div>
 
-          <a href="https://YOUR-DOMAIN.com/shop" class="buy-now" data-coming-soon>Buy Now</a>
-        </header>
+          <div class="icon-labels">
+            <div class="icon-label-group icon-label-group--ankh">
+              <span class="icon-label">Everlasting Life</span>
+              <div class="mini-divider"><span class="line"></span><span class="diamond">&#9670;</span><span class="line"></span></div>
+            </div>
+            <div class="icon-label-group icon-label-group--udja">
+              <span class="icon-label">Prosperity</span>
+              <div class="mini-divider"><span class="line"></span><span class="diamond">&#9670;</span><span class="line"></span></div>
+            </div>
+            <div class="icon-label-group icon-label-group--seneb">
+              <span class="icon-label">Health</span>
+              <div class="mini-divider"><span class="line"></span><span class="diamond">&#9670;</span><span class="line"></span></div>
+            </div>
+            <div class="icon-label-group icon-label-group--water">
+              <span class="icon-label">Water</span>
+              <div class="mini-divider"><span class="line"></span><span class="diamond">&#9670;</span><span class="line"></span></div>
+            </div>
+          </div>
+        </section>
 
-        <div class="hero-content">
-          <h1>SULIS MINERVA</h1>
-
-          <div class="divider">
+        <!-- ── TAGLINE ── -->
+        <section class="tagline-band">
+          <div class="moon-icon">&#9789;</div>
+          <p class="tagline-text">
+            <span class="line"></span>
+            <span class="diamond">&#9670;</span>
+            For where I am the abundance is with me.
+            <span class="diamond">&#9670;</span>
+            <span class="line"></span>
+          </p>
+          <div class="mini-divider tagline-below">
             <span class="line"></span>
             <span class="diamond">&#9670;</span>
             <span class="line"></span>
           </div>
+        </section>
 
-          <p class="water">Water</p>
-          <p class="elixir">Elixir of Life</p>
+      </div><!-- /desktop-layout -->
 
-          <div class="cta-row">
-            <a href="https://YOUR-DOMAIN.com/the-source" class="btn btn-filled" data-coming-soon>Discover the Source</a>
-            <a href="https://YOUR-DOMAIN.com/shop" class="btn btn-outline" data-coming-soon>Coming Soon</a>
+
+      <!-- ====================================================
+           MOBILE LAYOUT  (shown ONLY on ≤ 768 px)
+      ==================================================== -->
+      <div class="mobile-layout">
+
+        <!-- ── Mobile Hero ── -->
+        <section class="m-hero">
+          <picture class="m-hero-bg">
+            <source srcset="sulis-background.jpg" type="image/webp">
+            <img src="sulis-background.jpg" alt="Sulis Minerva sacred spring" loading="eager">
+          </picture>
+
+          <header class="m-navbar">
+            <div class="m-logo">
+              <img src="sulis-icon.png" alt="Sulis Minerva logo">
+              <span class="m-logo-text">SULIS MINERVA</span>
+            </div>
+            <a href="https://YOUR-DOMAIN.com/shop" class="m-buy-now" data-coming-soon>Buy Now</a>
+          </header>
+
+          <div class="m-hero-body">
+            <h1>SULIS MINERVA</h1>
+            <div class="m-divider">
+              <span class="line"></span>
+              <span class="diamond">&#9670;</span>
+              <span class="line"></span>
+            </div>
+            <p class="m-water">Water</p>
+            <p class="m-elixir">Elixir of Life</p>
           </div>
 
-          <div class="scroll-cue">&#8964;</div>
-        </div>
+          <div class="m-cta-row">
+            <a href="https://YOUR-DOMAIN.com/the-source" class="m-btn m-btn-filled" data-coming-soon>Discover the Source</a>
+            <a href="https://YOUR-DOMAIN.com/shop"       class="m-btn m-btn-outline" data-coming-soon>Coming Soon</a>
+          </div>
+        </section>
 
-      </section>
-
-      <!-- ============ MERGED: SOURCE + EXPERIENCE ============ -->
-      <section class="section-merged">
-        <!-- Add this inside .section-merged, BEFORE the merged-right div -->
-        <div class="merged-overlay-img">
-          <img src="merged-overlay-img.png" alt="Sulis Minerva Can" loading="eager">
-        </div>
-        <picture>
-          <source class="merged-photo-img" srcset="sulis-merged-bg.jpg" type="image/webp">
-          <img class="merged-photo-img" src="sulis-merged-bg.jpg"
-               alt="Sulis Minerva — the Mendip source waterfall and the can with Egyptian symbols" loading="eager">
-        </picture>
-
-        <!-- RIGHT: The Source text -->
-        <div class="merged-right">
+        <!-- ── Mobile: The Source ── -->
+        <section class="m-source-section">
           <h2>The Source</h2>
-          <div class="mini-divider">
+          <div class="m-divider">
             <span class="line"></span>
             <span class="diamond">&#9670;</span>
             <span class="line"></span>
@@ -619,86 +1050,97 @@
             Revered for centuries.<br>
             Presented for today.
           </p>
+        </section>
+
+        <!-- ── Mobile: Photo + Can overlay + Icon labels ── -->
+        <div class="m-photo-strip">
+          <!-- Background waterfall image -->
+          <img src="sulis-merged-bg.jpg" alt="Sulis Minerva waterfall source" loading="lazy">
+
+          <!-- Can overlay image — position/size via .m-can-overlay in CSS -->
+          <div class="m-can-overlay">
+            <img src="merged-overlay-img.png" alt="Sulis Minerva Can">
+          </div>
+
+          <!-- Icon labels — each absolutely positioned so you can freely move them -->
+          <div class="m-photo-icons">
+
+            <div class="m-photo-icon-label" style="top: 62%; left: 5%;">
+              <span class="m-icon-label">Everlasting Life</span>
+              <div class="m-icon-divider">
+                <span class="line"></span>
+                <span class="diamond">&#9670;</span>
+                <span class="line"></span>
+              </div>
+            </div>
+
+            <div class="m-photo-icon-label" style="top: 62%; left: 23.5%;">
+              <span class="m-icon-label">Prosperity</span>
+              <div class="m-icon-divider">
+                <span class="line"></span>
+                <span class="diamond">&#9670;</span>
+                <span class="line"></span>
+              </div>
+            </div>
+
+            <div class="m-photo-icon-label" style="top: 62%; left: 38%;">
+              <span class="m-icon-label">Health</span>
+              <div class="m-icon-divider">
+                <span class="line"></span>
+                <span class="diamond">&#9670;</span>
+                <span class="line"></span>
+              </div>
+            </div>
+
+            <div class="m-photo-icon-label" style="top: 62%; left: 51%;">
+              <span class="m-icon-label">Water</span>
+              <div class="m-icon-divider">
+                <span class="line"></span>
+                <span class="diamond">&#9670;</span>
+                <span class="line"></span>
+              </div>
+            </div>
+
+          </div><!-- /m-photo-icons -->
         </div>
 
-        <!-- LEFT: Experience heading + button -->
-        <div class="merged-left">
-          <p class="eyebrow">Pure. Powerful. Precious.</p>
-          <h2 class="exp-heading">Experience<br>Sulis Minerva</h2>
-          <div class="mini-divider">
+        <!-- ── Mobile: Experience ── -->
+        <section class="m-experience-section">
+          <p class="m-eyebrow">Pure. Powerful. Precious.</p>
+          <h2 class="m-exp-heading">Experience<br>Sulis Minerva</h2>
+          <div class="m-divider">
             <span class="line"></span>
             <span class="diamond">&#9670;</span>
             <span class="line"></span>
           </div>
-          <a href="https://YOUR-DOMAIN.com/the-source" class="btn" data-coming-soon>Experience Sulis Minerva</a>
-        </div>
+          <br>
+          <a href="https://YOUR-DOMAIN.com/the-source" class="m-exp-btn" data-coming-soon>Experience Sulis Minerva</a>
+        </section>
 
-        <!-- ICON LABELS -->
-        <div class="icon-labels">
-
-          <div class="icon-label-group icon-label-group--ankh">
-            <span class="icon-label">Everlasting Life</span>
-            <div class="mini-divider">
-              <span class="line"></span>
-              <span class="diamond">&#9670;</span>
-              <span class="line"></span>
-            </div>
+        <!-- ── Mobile: Tagline ── -->
+        <section class="m-tagline-band">
+          <div class="m-moon-icon">&#9789;</div>
+          <p class="m-tagline-text">
+            &#9670; &nbsp; For where I am the abundance is with me. &nbsp; &#9670;
+          </p>
+          <div class="m-tagline-divider">
+            <span class="line"></span>
+            <span class="diamond">&#9670;</span>
+            <span class="line"></span>
           </div>
+        </section>
 
-          <div class="icon-label-group icon-label-group--udja">
-            <span class="icon-label">Prosperity</span>
-            <div class="mini-divider">
-              <span class="line"></span>
-              <span class="diamond">&#9670;</span>
-              <span class="line"></span>
-            </div>
-          </div>
+      </div><!-- /mobile-layout -->
 
-          <div class="icon-label-group icon-label-group--seneb">
-            <span class="icon-label">Health</span>
-            <div class="mini-divider">
-              <span class="line"></span>
-              <span class="diamond">&#9670;</span>
-              <span class="line"></span>
-            </div>
-          </div>
 
-          <div class="icon-label-group icon-label-group--water">
-            <span class="icon-label">Water</span>
-            <div class="mini-divider">
-              <span class="line"></span>
-              <span class="diamond">&#9670;</span>
-              <span class="line"></span>
-            </div>
-          </div>
+    </div><!-- /card -->
+  </div><!-- /frame -->
 
-        </div>
-
-      </section>
-
-      <!-- ============ TAGLINE BAND ============ -->
-      <section class="tagline-band">
-        <div class="moon-icon">&#9789;</div>
-
-        <p class="tagline-text">
-          <span class="line"></span>
-          <span class="diamond">&#9670;</span>
-          For where I am the abundance is with me.
-          <span class="diamond">&#9670;</span>
-          <span class="line"></span>
-        </p>
-
-        <div class="mini-divider tagline-below">
-          <span class="line"></span>
-          <span class="diamond">&#9670;</span>
-          <span class="line"></span>
-        </div>
-      </section>
-
-    </div>
-  </div>
 
   <script>
+    /* ──────────────────────────────────────────
+       1. Coming-soon tooltip (both layouts)
+    ────────────────────────────────────────── */
     const LINKS_ENABLED = false;
 
     document.querySelectorAll('[data-coming-soon]').forEach(function (link) {
@@ -713,6 +1155,61 @@
         setTimeout(function () { tip.remove(); }, 1600);
       });
     });
+
+    /* ──────────────────────────────────────────
+       2. Orientation lock — portrait only
+       The Screen Orientation API is the modern
+       standard; the older lock() is a fallback.
+       Neither works in standard browser tabs on
+       desktop (intentional browser security),
+       but both work in installed PWAs and most
+       Android browsers.  iOS Safari requires a
+       PWA manifest with "orientation":"portrait".
+    ────────────────────────────────────────── */
+    (function lockOrientation() {
+      // Modern API
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('portrait').catch(function () {
+          // Browser may reject if not in a PWA context — silent fail is correct
+        });
+      }
+      // Legacy prefixed fallback (older Android / older Firefox)
+      var lockFn = screen.mozLockOrientation || screen.msLockOrientation;
+      if (lockFn) {
+        lockFn.call(screen, 'portrait');
+      }
+    })();
+
+    /* ──────────────────────────────────────────
+       3. Extra CSS guard: if someone DOES rotate
+       (e.g. on desktop or a browser that ignores
+       the API), force the page to stay portrait-
+       proportioned by capping max-width to the
+       initial portrait width we captured.
+    ────────────────────────────────────────── */
+    (function portraitGuard() {
+      // Only apply the guard on genuinely narrow (mobile) devices
+      if (window.innerWidth > 768) return;
+
+      var portraitWidth = Math.min(window.screen.width, window.screen.height);
+
+      function enforce() {
+        if (window.innerWidth > portraitWidth + 10) {
+          // Device appears to be landscape — scroll/zoom back to portrait feel
+          document.documentElement.style.maxWidth = portraitWidth + 'px';
+          document.documentElement.style.margin   = '0 auto';
+          document.documentElement.style.overflow  = 'hidden';
+        } else {
+          document.documentElement.style.maxWidth = '';
+          document.documentElement.style.margin   = '';
+          document.documentElement.style.overflow  = '';
+        }
+      }
+
+      window.addEventListener('orientationchange', enforce);
+      window.addEventListener('resize', enforce);
+      enforce();
+    })();
   </script>
 
 </body>
