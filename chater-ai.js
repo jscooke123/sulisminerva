@@ -23,7 +23,7 @@
 
   const DATA = window.CHATER_AI_DATA || {};
   const SITE_NAME = DATA.siteName || "this site";
-  const GREETING = DATA.greeting || `Hi! I'm Chater AI 🤖 — ask me anything about ${SITE_NAME}.`;
+  const GREETING = DATA.greeting || `Hi! I'm Sulis Minerva AI — ask me anything about ${SITE_NAME}.`;
   const FALLBACK_REPLY =
     DATA.fallback ||
     `I can only help with questions about ${SITE_NAME} and I don't have an answer for that one yet. Try rephrasing, or contact us directly.`;
@@ -31,7 +31,7 @@
 
   if (QA_PAIRS.length === 0) {
     console.warn(
-      "Chater AI: no knowledge base found. Make sure chater-ai-data.js is loaded BEFORE chater-ai.js."
+      "Sulis Minerva AI: no knowledge base found. Make sure chater-ai-data.js is loaded BEFORE chater-ai.js."
     );
   }
 
@@ -96,7 +96,7 @@
         <div class="cha-head">
           <div class="cha-head-avatar">${robotSVG}</div>
           <div class="cha-head-text">
-            <div class="cha-head-title">Chater AI</div>
+            <div class="cha-head-title">Sulis Minerva AI</div>
             <div class="cha-head-sub">${SITE_NAME} assistant</div>
           </div>
           <button class="cha-close" id="chaClose">✕</button>
@@ -107,7 +107,7 @@
           <button class="cha-send" id="chaSend">Send</button>
         </div>
       </div>
-      <div class="cha-bubble" id="chaBubble" title="Chat with Chater AI">${robotSVG}</div>
+      <div class="cha-bubble" id="chaBubble" title="Chat with Sulis Minerva AI">${robotSVG}</div>
     `;
     document.body.appendChild(root);
     return root;
