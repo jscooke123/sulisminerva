@@ -65,7 +65,7 @@ Product: "Elixir of Life"
      You shouldn't need to touch it.
      ============================================================ */
 
-  const STORAGE_KEY = "chater_ai_history_v1";
+  /* Chat is intentionally NOT persisted — every page load / re-open starts fresh. */
 
   const css = `
   .cha-root{position:fixed;bottom:20px;right:20px;z-index:999999;font-family:'DM Sans',Arial,sans-serif;}
@@ -142,18 +142,7 @@ Product: "Elixir of Life"
     return root;
   }
 
-  function getHistory() {
-    try {
-      return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "[]");
-    } catch (e) {
-      return [];
-    }
-  }
-  function saveHistory(h) {
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(h));
-    } catch (e) {}
-  }
+  /* History lives only in memory for the current page view — never saved. */
 
   function appendMessage(body, text, role) {
     const div = document.createElement("div");
@@ -254,18 +243,28 @@ Keep replies concise, warm, and easy to read in a small chat window (a few sente
     const input = root.querySelector("#chaInput");
     const sendBtn = root.querySelector("#chaSend");
 
-    let history = getHistory();
-    if (history.length === 0) {
-      history.push({ role: "bot", text: GREETING });
-      saveHistory(history);
+    let history = [{ role: "bot", text: GREETING }];
+    appendMessage(body, GREETING, "bot");
+
+    function resetChat() {
+      history = [{ role: "bot", text: GREETING }];
+      body.innerHTML = "";
+      appendMessage(body, GREETING, "bot");
     }
-    history.forEach((m) => appendMessage(body, m.text, m.role));
 
     let open = false;
     function togglePanel(force) {
       open = typeof force === "boolean" ? force : !open;
       panel.classList.toggle("open", open);
-      if (open) setTimeout(() => input.focus(), 50);
+      if (open) {
+        // Quietly make sure the key is ready before the visitor types anything —
+        // resolveApiKey() caches the result, so this costs nothing if already fetched.
+        resolveApiKey();
+        setTimeout(() => input.focus(), 50);
+      } else {
+        // Every time the widget is closed, wipe the conversation so it's fresh next time.
+        resetChat();
+      }
     }
     bubble.addEventListener("click", () => togglePanel());
     closeBtn.addEventListener("click", () => togglePanel(false));
@@ -276,7 +275,6 @@ Keep replies concise, warm, and easy to read in a small chat window (a few sente
       if (!text || busy) return;
       input.value = "";
       history.push({ role: "user", text });
-      saveHistory(history);
       appendMessage(body, text, "user");
 
       busy = true;
@@ -288,7 +286,6 @@ Keep replies concise, warm, and easy to read in a small chat window (a few sente
       sendBtn.disabled = false;
 
       history.push({ role: "bot", text: reply });
-      saveHistory(history);
       appendMessage(body, reply, "bot");
     }
 
