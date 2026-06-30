@@ -2,7 +2,7 @@ window.CHATER_AI_DATA = {
 
   siteName: "Sulis Minerva",
 
-  greeting: "Hi! I'm Chater AI — ask me anything about Sulis Minerva.",
+  greeting: "Hi! I'm Sulis Minerva AI — ask me anything about Sulis Minerva.",
 
   fallback:
     "I can only help with questions about Sulis Minerva and I don't have an answer for that one yet. " +
@@ -13,11 +13,11 @@ window.CHATER_AI_DATA = {
     /* ── Greetings / small talk ───────────────────────────── */
     {
       triggers: ["hello", "hi", "hey", "hiya", "yo", "good morning", "good afternoon", "good evening", "morning", "afternoon"],
-      answer: "Hi! I'm Chater AI — ask me anything about Sulis Minerva."
+      answer: "Hi! I'm Sulis Minerva AI — ask me anything about Sulis Minerva."
     },
     {
       triggers: ["how are you", "how's it going", "you good", "you ok", "are you a bot", "are you human", "are you real", "are you ai"],
-      answer: "I'm Chater AI, the assistant for Sulis Minerva — I'm doing great, thanks for asking! What would you like to know about the site or our products?"
+      answer: "I'm Sulis Minerva AI, the assistant for Sulis Minerva — I'm doing great, thanks for asking! What would you like to know about the site or our products?"
     },
     {
       triggers: ["thank you", "thanks", "thx", "cheers", "appreciate it", "ta"],
@@ -29,7 +29,7 @@ window.CHATER_AI_DATA = {
     },
     {
       triggers: ["who are you", "what are you", "your name", "what's your name", "whats your name"],
-      answer: "I'm Chater AI, the built-in assistant here on the Sulis Minerva site — happy to answer questions about the brand, the product, and how to get in touch."
+      answer: "I'm Sulis Minerva AI, the built-in assistant here on the Sulis Minerva site — happy to answer questions about the brand, the product, and how to get in touch."
     },
 
     /* ── About the brand / product ────────────────────────── */
