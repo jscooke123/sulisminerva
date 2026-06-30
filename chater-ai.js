@@ -18,7 +18,6 @@
    base, including typo-tolerant ("fuzzy") matching so close
    misspellings still find the right answer.
    ============================================================ */
-
 (function () {
   "use strict";
 
