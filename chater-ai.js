@@ -5,67 +5,90 @@
        <script src="chater-ai.js"></script>
    That's it. No other markup, CSS, or JS needed on the host page.
 
-   Everything (HTML, CSS, behaviour) is self-contained and gets
-   injected into the page automatically when this file loads.
+   This version is a fully self-contained, offline "inbuilt" AI —
+   there is no external API call, no API key, and no rate limit.
+   It works by matching whatever the visitor types against a list
+   of question/answer entries you define below, and only responds
+   to things related to your site. Everything runs instantly in
+   the visitor's browser for free, forever.
    ============================================================ */
 
 (function () {
   "use strict";
 
   /* ============================================================
-     1. SITE KNOWLEDGE  (EDIT THIS SECTION)
-     ------------------------------------------------------------
-     Put whatever information you want Chater AI to know about
-     YOUR site here. This is the only thing it is allowed to talk
-     about — it will politely decline anything unrelated.
-     Plain text is fine, write it like you're briefing a new
-     member of staff.
+     1. SITE NAME + GREETING  (EDIT THIS SECTION)
      ============================================================ */
   const SITE_NAME = "Sulis Minerva";
-
-  const SITE_KNOWLEDGE = `
-Site name: Sulis Minerva
-Product: "Elixir of Life"
-
---- Replace everything below with real site details ---
-- What the product is and what it does
-- Ingredients / ingredient highlights
-- Pricing and where/how to buy
-- Shipping, returns, and delivery times
-- FAQs (storage, dosage, who it's for, allergens, etc.)
-- Contact details / support hours
-- Any promotions or bundles currently running
-`.trim();
-
-  /* Optional: a short opening line Chater AI uses when first opened */
   const GREETING = `Hi! I'm Chater AI 🤖 — ask me anything about ${SITE_NAME}.`;
 
+  /* What Chater AI says when it can't find a good match for the question
+     (either because it's off-topic, or just not covered below yet). */
+  const FALLBACK_REPLY =
+    `I can only help with questions about ${SITE_NAME} and I don't have an answer for that one yet. ` +
+    `Try rephrasing, or contact us directly and we'll be happy to help.`;
+
   /* ============================================================
-     2. CONNECTION SETTINGS  (EDIT THIS SECTION)
+     2. KNOWLEDGE BASE  (EDIT THIS SECTION)
      ------------------------------------------------------------
-     Chater AI calls OpenRouter's chat completion endpoint.
-     The key is split into two raw-text files hosted on GitHub
-     (KEY1_URL + KEY2_URL, joined together at runtime) so the full
-     key never sits in one place in plain text. Update those two
-     files whenever you need to rotate the key — every site
-     embedding this one chater-ai.js file picks up the change
-     automatically. You can also just paste a full key directly
-     into OPENROUTER_API_KEY below and skip the URLs entirely.
+     This is the whole "brain" of Chater AI. Add one entry per
+     topic/question. Each entry has:
+       - triggers: an array of words/short phrases a visitor might
+         type that should lead to this answer. Add as many
+         variations, synonyms, and misspellings as you can think of
+         — the more you add, the smarter it feels.
+       - answer: the exact reply Chater AI will give, word for word.
+
+     There is no limit on how many entries you add. Order doesn't
+     matter — the best-matching entry always wins.
      ============================================================ */
-  const OPENROUTER_API_KEY = ""; // <-- paste a key here directly, or leave blank to use the URLs below
-
-  // Key is split across two raw-text files and joined together at runtime.
-  const KEY1_URL = "https://raw.githubusercontent.com/21cookej/21cookej.github.io/refs/heads/main/key1.txt";
-  const KEY2_URL = "https://raw.githubusercontent.com/21cookej/21cookej.github.io/refs/heads/main/key2.txt";
-
-  const MODEL = "openai/gpt-oss-120b:free";
+  const QA_PAIRS = [
+    {
+      triggers: ["what is sulis minerva", "what is this", "what do you sell", "about sulis minerva", "tell me about sulis minerva", "what is the product"],
+      answer: `${SITE_NAME} is "Elixir of Life" — water sourced from the ancient Mendip spring, presented as a premium, modern product inspired by centuries of reverence for the source.`
+    },
+    {
+      triggers: ["where does the water come from", "source", "mendip", "spring", "where is it from"],
+      answer: `Our water is drawn from the ancient Mendip spring — a source that has been revered for centuries and is now presented for today.`
+    },
+    {
+      triggers: ["price", "cost", "how much", "pricing"],
+      answer: `Pricing details will be available once ${SITE_NAME} launches. Check back on the Shop page soon, or contact us for early information.`
+    },
+    {
+      triggers: ["buy", "where can i buy", "purchase", "order", "shop"],
+      answer: `${SITE_NAME} isn't available to purchase just yet — we're putting the finishing touches on launch. Click "Coming Soon" on the site and check back shortly!`
+    },
+    {
+      triggers: ["shipping", "delivery", "how long does delivery take", "do you ship"],
+      answer: `Shipping and delivery details will be published once ${SITE_NAME} officially launches. Please check back soon.`
+    },
+    {
+      triggers: ["returns", "refund", "can i return it"],
+      answer: `Our returns policy will be published at launch. In the meantime, feel free to contact us with any questions.`
+    },
+    {
+      triggers: ["contact", "support", "help", "get in touch", "email", "phone number"],
+      answer: `You can reach the ${SITE_NAME} team through the contact details on our site, or by replying here and a member of the team will follow up.`
+    },
+    {
+      triggers: ["benefits", "why drink it", "what does it do", "health benefits"],
+      answer: `${SITE_NAME} is presented around the ideas of everlasting life, prosperity, health, and water itself — the four pillars woven through our branding and sourced from ancient symbolism.`
+    },
+    {
+      triggers: ["hello", "hi", "hey", "good morning", "good afternoon"],
+      answer: GREETING
+    },
+    {
+      triggers: ["thank you", "thanks", "cheers"],
+      answer: `You're welcome! Let me know if there's anything else about ${SITE_NAME} I can help with.`
+    }
+  ];
 
   /* ============================================================
      Everything below this line is the widget engine.
      You shouldn't need to touch it.
      ============================================================ */
-
-  /* Chat is intentionally NOT persisted — every page load / re-open starts fresh. */
 
   const css = `
   .cha-root{position:fixed;bottom:20px;right:20px;z-index:999999;font-family:'DM Sans',Arial,sans-serif;}
@@ -136,13 +159,11 @@ Product: "Elixir of Life"
           <button class="cha-send" id="chaSend">Send</button>
         </div>
       </div>
-      <div class="cha-bubble" id="chaBubble" title="Chat with Chater AI">${robotSVG.replace(/width="14"/, 'width="14"')}</div>
+      <div class="cha-bubble" id="chaBubble" title="Chat with Chater AI">${robotSVG}</div>
     `;
     document.body.appendChild(root);
     return root;
   }
-
-  /* History lives only in memory for the current page view — never saved. */
 
   function appendMessage(body, text, role) {
     const div = document.createElement("div");
@@ -166,71 +187,55 @@ Product: "Elixir of Life"
     if (el) el.remove();
   }
 
-  async function resolveApiKey() {
-    if (OPENROUTER_API_KEY) return OPENROUTER_API_KEY;
-    const cached = sessionStorage.getItem("chater_ai_key");
-    if (cached) return cached;
-    if (!KEY1_URL || !KEY2_URL) return "";
-    try {
-      const [res1, res2] = await Promise.all([fetch(KEY1_URL), fetch(KEY2_URL)]);
-      if (!res1.ok || !res2.ok) return "";
-      const key1 = (await res1.text()).trim();
-      const key2 = (await res2.text()).trim();
-      const key = key1 + key2;
-      if (key.length > 10) {
-        sessionStorage.setItem("chater_ai_key", key);
-        return key;
+  /* ============================================================
+     MATCHING ENGINE
+     ------------------------------------------------------------
+     Very small, fast, dependency-free keyword matcher. Scores each
+     QA_PAIRS entry by how many of its trigger words/phrases appear
+     in what the visitor typed, then returns the best match if it
+     clears a minimum confidence bar — otherwise FALLBACK_REPLY.
+     ============================================================ */
+  function normalize(str) {
+    return str
+      .toLowerCase()
+      .replace(/[^\w\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function scoreEntry(userText, entry) {
+    const normUser = " " + normalize(userText) + " ";
+    let best = 0;
+    entry.triggers.forEach((trigger) => {
+      const t = normalize(trigger);
+      if (!t) return;
+      if (normUser.includes(" " + t + " ")) {
+        // Exact phrase match — strong signal, longer phrases score higher.
+        best = Math.max(best, 10 + t.split(" ").length);
+        return;
       }
-    } catch (e) {}
-    return "";
+      // Partial word-overlap fallback for looser matching.
+      const words = t.split(" ").filter(Boolean);
+      const hits = words.filter((w) => w.length > 2 && normUser.includes(" " + w + " ")).length;
+      if (hits > 0) {
+        best = Math.max(best, (hits / words.length) * 6);
+      }
+    });
+    return best;
   }
 
-  function buildSystemPrompt() {
-    return `You are "Chater AI", a friendly help-desk assistant embedded on the website "${SITE_NAME}".
-
-You may ONLY answer questions that relate to this website, its products, content, policies, or the information below. This includes greetings and basic small talk about the site itself.
-
-If a visitor asks something unrelated to ${SITE_NAME} (e.g. general trivia, coding help, world news, topics outside this site), politely decline and steer them back, for example: "I can only help with questions about ${SITE_NAME} — is there something about the site or our products I can help with?" Do not answer the unrelated question even partially.
-
-Here is everything you are allowed to know about the site. Treat it as ground truth. If the answer isn't covered here, say you don't have that information and suggest the visitor contact support, rather than guessing:
-
------ SITE INFORMATION -----
-${SITE_KNOWLEDGE}
------ END SITE INFORMATION -----
-
-Keep replies concise, warm, and easy to read in a small chat window (a few sentences at most unless detail is genuinely needed).`;
-  }
-
-  async function getReply(history) {
-    const apiKey = await resolveApiKey();
-    if (!apiKey) {
-      return "Chater AI isn't fully set up yet — no API key has been configured for this site.";
-    }
-    const messages = [{ role: "system", content: buildSystemPrompt() }].concat(
-      history.map((m) => ({ role: m.role === "bot" ? "assistant" : "user", content: m.text }))
-    );
-    try {
-      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + apiKey,
-          "Content-Type": "application/json",
-          "HTTP-Referer": window.location.origin,
-          "X-Title": "Chater AI",
-        },
-        body: JSON.stringify({
-          model: MODEL,
-          messages: messages,
-          temperature: 0.4,
-        }),
-      });
-      const data = await res.json();
-      if (data.choices && data.choices[0]) return data.choices[0].message.content;
-      if (data.error) return "Sorry, something went wrong: " + data.error.message;
-      return "Sorry, I didn't get a usable response. Please try again.";
-    } catch (e) {
-      return "Sorry, I couldn't connect right now. Please try again in a moment.";
-    }
+  function findReply(userText) {
+    let bestScore = 0;
+    let bestAnswer = null;
+    QA_PAIRS.forEach((entry) => {
+      const score = scoreEntry(userText, entry);
+      if (score > bestScore) {
+        bestScore = score;
+        bestAnswer = entry.answer;
+      }
+    });
+    const CONFIDENCE_THRESHOLD = 3; // tune this if it feels too strict/loose
+    return bestScore >= CONFIDENCE_THRESHOLD ? bestAnswer : FALLBACK_REPLY;
   }
 
   function init() {
@@ -243,23 +248,17 @@ Keep replies concise, warm, and easy to read in a small chat window (a few sente
     const input = root.querySelector("#chaInput");
     const sendBtn = root.querySelector("#chaSend");
 
-    let history = [{ role: "bot", text: GREETING }];
-    appendMessage(body, GREETING, "bot");
-
     function resetChat() {
-      history = [{ role: "bot", text: GREETING }];
       body.innerHTML = "";
       appendMessage(body, GREETING, "bot");
     }
+    resetChat();
 
     let open = false;
     function togglePanel(force) {
       open = typeof force === "boolean" ? force : !open;
       panel.classList.toggle("open", open);
       if (open) {
-        // Quietly make sure the key is ready before the visitor types anything —
-        // resolveApiKey() caches the result, so this costs nothing if already fetched.
-        resolveApiKey();
         setTimeout(() => input.focus(), 50);
       } else {
         // Every time the widget is closed, wipe the conversation so it's fresh next time.
@@ -270,23 +269,25 @@ Keep replies concise, warm, and easy to read in a small chat window (a few sente
     closeBtn.addEventListener("click", () => togglePanel(false));
 
     let busy = false;
-    async function send() {
+    function send() {
       const text = input.value.trim();
       if (!text || busy) return;
       input.value = "";
-      history.push({ role: "user", text });
       appendMessage(body, text, "user");
 
       busy = true;
       sendBtn.disabled = true;
       showTyping(body);
-      const reply = await getReply(history);
-      hideTyping();
-      busy = false;
-      sendBtn.disabled = false;
 
-      history.push({ role: "bot", text: reply });
-      appendMessage(body, reply, "bot");
+      // Tiny artificial delay so it feels like a response rather than an
+      // instant lookup — purely cosmetic, the matching itself is instant.
+      setTimeout(() => {
+        hideTyping();
+        busy = false;
+        sendBtn.disabled = false;
+        const reply = findReply(text);
+        appendMessage(body, reply, "bot");
+      }, 350);
     }
 
     sendBtn.addEventListener("click", send);
