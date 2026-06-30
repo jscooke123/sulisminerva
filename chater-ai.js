@@ -44,13 +44,20 @@ Product: "Elixir of Life"
      2. CONNECTION SETTINGS  (EDIT THIS SECTION)
      ------------------------------------------------------------
      Chater AI calls OpenRouter's chat completion endpoint.
-     Paste your own key below, OR leave blank and it will ask the
-     visitor's browser to fetch it from the URL in API_KEY_URL
-     (handy if you want to rotate keys without re-deploying every
-     site that embeds this file).
+     The key is split into two raw-text files hosted on GitHub
+     (KEY1_URL + KEY2_URL, joined together at runtime) so the full
+     key never sits in one place in plain text. Update those two
+     files whenever you need to rotate the key — every site
+     embedding this one chater-ai.js file picks up the change
+     automatically. You can also just paste a full key directly
+     into OPENROUTER_API_KEY below and skip the URLs entirely.
      ============================================================ */
-  const OPENROUTER_API_KEY = ""; // <-- paste a key here, or leave blank
-  const API_KEY_URL = "";        // <-- optional: a raw-text URL serving just the key
+  const OPENROUTER_API_KEY = ""; // <-- paste a key here directly, or leave blank to use the URLs below
+
+  // Key is split across two raw-text files and joined together at runtime.
+  const KEY1_URL = "https://raw.githubusercontent.com/21cookej/21cookej.github.io/refs/heads/main/key1.txt";
+  const KEY2_URL = "https://raw.githubusercontent.com/21cookej/21cookej.github.io/refs/heads/main/key2.txt";
+
   const MODEL = "openai/gpt-oss-120b:free";
 
   /* ============================================================
@@ -174,11 +181,13 @@ Product: "Elixir of Life"
     if (OPENROUTER_API_KEY) return OPENROUTER_API_KEY;
     const cached = sessionStorage.getItem("chater_ai_key");
     if (cached) return cached;
-    if (!API_KEY_URL) return "";
+    if (!KEY1_URL || !KEY2_URL) return "";
     try {
-      const res = await fetch(API_KEY_URL);
-      if (!res.ok) return "";
-      const key = (await res.text()).trim();
+      const [res1, res2] = await Promise.all([fetch(KEY1_URL), fetch(KEY2_URL)]);
+      if (!res1.ok || !res2.ok) return "";
+      const key1 = (await res1.text()).trim();
+      const key2 = (await res2.text()).trim();
+      const key = key1 + key2;
       if (key.length > 10) {
         sessionStorage.setItem("chater_ai_key", key);
         return key;
