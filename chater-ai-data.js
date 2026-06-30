@@ -32,7 +32,7 @@ window.CHATER_AI_DATA = {
 
   siteName: "Sulis Minerva",
 
-  greeting: "Hi! I'm Chater AI 🤖 — ask me anything about Sulis Minerva.",
+  greeting: "Hi! I'm Chater AI — ask me anything about Sulis Minerva.",
 
   fallback:
     "I can only help with questions about Sulis Minerva and I don't have an answer for that one yet. " +
@@ -43,7 +43,7 @@ window.CHATER_AI_DATA = {
     /* ── Greetings / small talk ───────────────────────────── */
     {
       triggers: ["hello", "hi", "hey", "hiya", "yo", "good morning", "good afternoon", "good evening", "morning", "afternoon"],
-      answer: "Hi! I'm Chater AI 🤖 — ask me anything about Sulis Minerva."
+      answer: "Hi! I'm Chater AI — ask me anything about Sulis Minerva."
     },
     {
       triggers: ["how are you", "how's it going", "you good", "you ok", "are you a bot", "are you human", "are you real", "are you ai"],
