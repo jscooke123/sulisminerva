@@ -1,95 +1,44 @@
 /* ============================================================
    CHATER AI — drop-in site chat widget
    ------------------------------------------------------------
-   Usage: add this one line near the end of your page's <body>
-       <script src="chater-ai.js"></script>
-   That's it. No other markup, CSS, or JS needed on the host page.
+   Usage: add these two lines near the end of your page's <body>,
+   in this order:
 
-   This version is a fully self-contained, offline "inbuilt" AI —
-   there is no external API call, no API key, and no rate limit.
-   It works by matching whatever the visitor types against a list
-   of question/answer entries you define below, and only responds
-   to things related to your site. Everything runs instantly in
-   the visitor's browser for free, forever.
+       <script src="chater-ai-data.js"></script>
+       <script src="chater-ai.js"></script>
+
+   chater-ai-data.js holds all the questions/answers Chater AI
+   knows (see that file to edit or extend the knowledge base).
+   chater-ai.js (this file) is just the widget engine — you
+   shouldn't need to edit anything below.
+
+   This is a fully self-contained, offline "inbuilt" AI — there is
+   no external API call, no API key, and no rate limit. It works
+   by matching whatever the visitor types against the knowledge
+   base, including typo-tolerant ("fuzzy") matching so close
+   misspellings still find the right answer.
    ============================================================ */
 
 (function () {
   "use strict";
 
-  /* ============================================================
-     1. SITE NAME + GREETING  (EDIT THIS SECTION)
-     ============================================================ */
-  const SITE_NAME = "Sulis Minerva";
-  const GREETING = `Hi! I'm Chater AI 🤖 — ask me anything about ${SITE_NAME}.`;
-
-  /* What Chater AI says when it can't find a good match for the question
-     (either because it's off-topic, or just not covered below yet). */
+  const DATA = window.CHATER_AI_DATA || {};
+  const SITE_NAME = DATA.siteName || "this site";
+  const GREETING = DATA.greeting || `Hi! I'm Chater AI 🤖 — ask me anything about ${SITE_NAME}.`;
   const FALLBACK_REPLY =
-    `I can only help with questions about ${SITE_NAME} and I don't have an answer for that one yet. ` +
-    `Try rephrasing, or contact us directly and we'll be happy to help.`;
+    DATA.fallback ||
+    `I can only help with questions about ${SITE_NAME} and I don't have an answer for that one yet. Try rephrasing, or contact us directly.`;
+  const QA_PAIRS = Array.isArray(DATA.qaPairs) ? DATA.qaPairs : [];
+
+  if (QA_PAIRS.length === 0) {
+    console.warn(
+      "Chater AI: no knowledge base found. Make sure chater-ai-data.js is loaded BEFORE chater-ai.js."
+    );
+  }
 
   /* ============================================================
-     2. KNOWLEDGE BASE  (EDIT THIS SECTION)
-     ------------------------------------------------------------
-     This is the whole "brain" of Chater AI. Add one entry per
-     topic/question. Each entry has:
-       - triggers: an array of words/short phrases a visitor might
-         type that should lead to this answer. Add as many
-         variations, synonyms, and misspellings as you can think of
-         — the more you add, the smarter it feels.
-       - answer: the exact reply Chater AI will give, word for word.
-
-     There is no limit on how many entries you add. Order doesn't
-     matter — the best-matching entry always wins.
+     STYLES + MARKUP
      ============================================================ */
-  const QA_PAIRS = [
-    {
-      triggers: ["what is sulis minerva", "what is this", "what do you sell", "about sulis minerva", "tell me about sulis minerva", "what is the product"],
-      answer: `${SITE_NAME} is "Elixir of Life" — water sourced from the ancient Mendip spring, presented as a premium, modern product inspired by centuries of reverence for the source.`
-    },
-    {
-      triggers: ["where does the water come from", "source", "mendip", "spring", "where is it from"],
-      answer: `Our water is drawn from the ancient Mendip spring — a source that has been revered for centuries and is now presented for today.`
-    },
-    {
-      triggers: ["price", "cost", "how much", "pricing"],
-      answer: `Pricing details will be available once ${SITE_NAME} launches. Check back on the Shop page soon, or contact us for early information.`
-    },
-    {
-      triggers: ["buy", "where can i buy", "purchase", "order", "shop"],
-      answer: `${SITE_NAME} isn't available to purchase just yet — we're putting the finishing touches on launch. Click "Coming Soon" on the site and check back shortly!`
-    },
-    {
-      triggers: ["shipping", "delivery", "how long does delivery take", "do you ship"],
-      answer: `Shipping and delivery details will be published once ${SITE_NAME} officially launches. Please check back soon.`
-    },
-    {
-      triggers: ["returns", "refund", "can i return it"],
-      answer: `Our returns policy will be published at launch. In the meantime, feel free to contact us with any questions.`
-    },
-    {
-      triggers: ["contact", "support", "help", "get in touch", "email", "phone number"],
-      answer: `You can reach the ${SITE_NAME} team through the contact details on our site, or by replying here and a member of the team will follow up.`
-    },
-    {
-      triggers: ["benefits", "why drink it", "what does it do", "health benefits"],
-      answer: `${SITE_NAME} is presented around the ideas of everlasting life, prosperity, health, and water itself — the four pillars woven through our branding and sourced from ancient symbolism.`
-    },
-    {
-      triggers: ["hello", "hi", "hey", "good morning", "good afternoon"],
-      answer: GREETING
-    },
-    {
-      triggers: ["thank you", "thanks", "cheers"],
-      answer: `You're welcome! Let me know if there's anything else about ${SITE_NAME} I can help with.`
-    }
-  ];
-
-  /* ============================================================
-     Everything below this line is the widget engine.
-     You shouldn't need to touch it.
-     ============================================================ */
-
   const css = `
   .cha-root{position:fixed;bottom:20px;right:20px;z-index:999999;font-family:'DM Sans',Arial,sans-serif;}
   .cha-bubble{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#f7c948,#caa018);box-shadow:0 6px 20px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #fff3cf;transition:transform .18s ease;}
@@ -190,10 +139,21 @@
   /* ============================================================
      MATCHING ENGINE
      ------------------------------------------------------------
-     Very small, fast, dependency-free keyword matcher. Scores each
-     QA_PAIRS entry by how many of its trigger words/phrases appear
-     in what the visitor typed, then returns the best match if it
-     clears a minimum confidence bar — otherwise FALLBACK_REPLY.
+     A small, fast, dependency-free matcher with two layers:
+
+     1. EXACT layer — if a whole trigger phrase appears verbatim in
+        what the visitor typed, that's the strongest possible signal.
+     2. FUZZY layer — every word the visitor typed is compared
+        against every trigger word using Levenshtein ("edit")
+        distance, so close misspellings ("recieve", "deliverry",
+        "pric") still match the right trigger word. The shorter the
+        word, the less typo tolerance it gets (to avoid false
+        matches between short unrelated words).
+
+     Scores from both layers are combined per knowledge-base entry,
+     and the entry with the highest combined score wins — as long
+     as it clears CONFIDENCE_THRESHOLD. Below that, Chater AI
+     admits it doesn't know rather than guessing.
      ============================================================ */
   function normalize(str) {
     return str
@@ -203,41 +163,95 @@
       .trim();
   }
 
-  function scoreEntry(userText, entry) {
-    const normUser = " " + normalize(userText) + " ";
+  // Classic Levenshtein edit-distance between two strings.
+  function levenshtein(a, b) {
+    if (a === b) return 0;
+    const al = a.length, bl = b.length;
+    if (al === 0) return bl;
+    if (bl === 0) return al;
+    let prev = new Array(bl + 1);
+    let curr = new Array(bl + 1);
+    for (let j = 0; j <= bl; j++) prev[j] = j;
+    for (let i = 1; i <= al; i++) {
+      curr[0] = i;
+      for (let j = 1; j <= bl; j++) {
+        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+        curr[j] = Math.min(
+          prev[j] + 1,      // deletion
+          curr[j - 1] + 1,  // insertion
+          prev[j - 1] + cost // substitution
+        );
+      }
+      const tmp = prev; prev = curr; curr = tmp;
+    }
+    return prev[bl];
+  }
+
+  // How many typo "edits" we tolerate for a word of a given length.
+  function toleranceFor(len) {
+    if (len <= 3) return 0;   // very short words must match exactly
+    if (len <= 5) return 1;
+    if (len <= 8) return 2;
+    return 3;
+  }
+
+  // Does userWord fuzzy-match triggerWord within tolerance?
+  function fuzzyWordMatch(userWord, triggerWord) {
+    if (userWord === triggerWord) return true;
+    const tol = toleranceFor(Math.min(userWord.length, triggerWord.length));
+    if (tol === 0) return false;
+    if (Math.abs(userWord.length - triggerWord.length) > tol) return false;
+    return levenshtein(userWord, triggerWord) <= tol;
+  }
+
+  function scoreEntry(userWords, normUserPadded, entry) {
     let best = 0;
     entry.triggers.forEach((trigger) => {
       const t = normalize(trigger);
       if (!t) return;
-      if (normUser.includes(" " + t + " ")) {
-        // Exact phrase match — strong signal, longer phrases score higher.
+
+      // Layer 1 — exact phrase match (strongest signal).
+      if (normUserPadded.includes(" " + t + " ")) {
         best = Math.max(best, 10 + t.split(" ").length);
         return;
       }
-      // Partial word-overlap fallback for looser matching.
-      const words = t.split(" ").filter(Boolean);
-      const hits = words.filter((w) => w.length > 2 && normUser.includes(" " + w + " ")).length;
+
+      // Layer 2 — per-word fuzzy match (typo tolerant).
+      const triggerWords = t.split(" ").filter(Boolean);
+      let hits = 0;
+      triggerWords.forEach((tw) => {
+        const matched = userWords.some((uw) => fuzzyWordMatch(uw, tw));
+        if (matched) hits++;
+      });
       if (hits > 0) {
-        best = Math.max(best, (hits / words.length) * 6);
+        best = Math.max(best, (hits / triggerWords.length) * 6);
       }
     });
     return best;
   }
 
   function findReply(userText) {
+    const normUser = normalize(userText);
+    const normUserPadded = " " + normUser + " ";
+    const userWords = normUser.split(" ").filter(Boolean);
+
     let bestScore = 0;
     let bestAnswer = null;
     QA_PAIRS.forEach((entry) => {
-      const score = scoreEntry(userText, entry);
+      const score = scoreEntry(userWords, normUserPadded, entry);
       if (score > bestScore) {
         bestScore = score;
         bestAnswer = entry.answer;
       }
     });
-    const CONFIDENCE_THRESHOLD = 3; // tune this if it feels too strict/loose
+
+    const CONFIDENCE_THRESHOLD = 3; // tune if it feels too strict/loose
     return bestScore >= CONFIDENCE_THRESHOLD ? bestAnswer : FALLBACK_REPLY;
   }
 
+  /* ============================================================
+     WIDGET BEHAVIOUR
+     ============================================================ */
   function init() {
     injectStyles();
     const root = buildDom();
@@ -279,8 +293,8 @@
       sendBtn.disabled = true;
       showTyping(body);
 
-      // Tiny artificial delay so it feels like a response rather than an
-      // instant lookup — purely cosmetic, the matching itself is instant.
+      // Tiny artificial delay so it feels like a considered response rather
+      // than an instant lookup — the matching itself is instant either way.
       setTimeout(() => {
         hideTyping();
         busy = false;
