@@ -1,33 +1,3 @@
-/* ============================================================
-   CHATER AI — KNOWLEDGE BASE
-   ------------------------------------------------------------
-   This file holds everything Chater AI is allowed to talk about.
-   It must be loaded BEFORE chater-ai.js, e.g.:
-
-       <script src="chater-ai-data.js"></script>
-       <script src="chater-ai.js"></script>
-
-   Keeping this in its own file means you (or anyone managing the
-   site) can edit, extend, or completely rewrite the knowledge base
-   without ever touching the widget's actual code in chater-ai.js.
-
-   ------------------------------------------------------------
-   HOW TO ADD / EDIT AN ENTRY
-   ------------------------------------------------------------
-   Each entry in qaPairs needs:
-     - triggers: an array of words or short phrases a visitor might
-       type. Add LOTS of variations — synonyms, shorter/longer
-       phrasings, common misspellings if you can think of obvious
-       ones. The matching engine in chater-ai.js also does fuzzy
-       (typo-tolerant) matching automatically, so you don't have to
-       list every possible misspelling, but the more natural
-       phrasings you include the more accurate it will be.
-     - answer: the exact reply Chater AI gives, word for word.
-
-   There's no limit on how many entries you add, and order doesn't
-   matter — whichever entry matches best always wins.
-   ============================================================ */
-
 window.CHATER_AI_DATA = {
 
   siteName: "Sulis Minerva",
