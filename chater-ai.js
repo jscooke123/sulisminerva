@@ -40,12 +40,12 @@
      ============================================================ */
   const css = `
   .cha-root{position:fixed;bottom:20px;right:20px;z-index:999999;font-family:'DM Sans',Arial,sans-serif;}
-  .cha-bubble{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#f7c948,#caa018);box-shadow:0 6px 20px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #fff3cf;transition:transform .18s ease;}
+  .cha-bubble{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#c9a455,#a9842f);box-shadow:0 6px 20px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid #fff3cf;transition:transform .18s ease;}
   .cha-bubble:hover{transform:scale(1.07);}
   .cha-bubble svg{width:32px;height:32px;}
   .cha-panel{position:absolute;bottom:74px;right:0;width:320px;height:430px;background:#fffaf0;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.28);display:none;flex-direction:column;overflow:hidden;border:1px solid #ecd9a0;}
   .cha-panel.open{display:flex;}
-  .cha-head{background:linear-gradient(135deg,#f7c948,#caa018);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#3a2c05;}
+  .cha-head{background:linear-gradient(135deg,#f7c948,#a9842f);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#3a2c05;}
   .cha-head-avatar{width:30px;height:30px;border-radius:50%;background:#fffaf0;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .cha-head-avatar svg{width:18px;height:18px;}
   .cha-head-text{flex:1;}
